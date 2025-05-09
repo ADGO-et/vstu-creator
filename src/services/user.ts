@@ -10,6 +10,7 @@ import { AxiosError, AxiosResponse } from "axios";
 export const USER_KEY = "users";
 const STUDENT_PROFILE_QUERY_KEY = "studentProfile";
 const PARENT_PROFILE_QUERY_KEY = "parentProfile";
+const STUDENTS = "students";
 
 export function useContentCreatorSignin({ onSuccess }: { onSuccess: () => void }) {
   return useMutation<void, AxiosError, LoginCreator>({
@@ -20,6 +21,17 @@ export function useContentCreatorSignin({ onSuccess }: { onSuccess: () => void }
     retry: 1,
   });
 }
+
+export const useGetStudent = (studentId: string) => {
+  return useQuery<Student, AxiosError>({
+    queryKey: [STUDENTS, studentId],
+    queryFn: async () => {
+      const { data } = await apiClient.get<Student>(`/students/${studentId}`);
+      return data;
+    },
+  });
+};
+
 
 export function useGetStudentProfile(options?: { enabled?: boolean }) {
   return useQuery<Student, AxiosError>({

@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/axios";
+import { QuestionType2 } from "@/types/questions";
 import {
   AddEditQuiz,
   AddEditTopic,
@@ -132,6 +133,53 @@ export function useGetTopicsWithInfo() {
     },
   });
 }
+
+export function useEditSingleQuestion() {
+  const client = useQueryClient();
+  return useMutation<
+    void,
+    AxiosError,
+    {
+      questionId: string;
+      question:  { question: string; choices: string[] };
+    }
+  >({
+    mutationFn: async ({ question, questionId }) => {
+      await apiClient.patch(`/questions/${questionId}`, question);
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: [QUIZZES] });
+    },
+  });
+}
+
+export function useGetQuestion(questionId: string | null) {
+  return useQuery<QuestionType2, AxiosError>({
+    queryKey: ["questionReport", questionId],
+    enabled: questionId !== null,
+
+    queryFn: async () => {
+      const res = await apiClient.get<QuestionType2>(
+        `/questions/${questionId}`
+      );
+      return res.data;
+    },
+  });
+}
+
+
+export function useDeleteQuestionDirect(questionId: string) {
+  const client = useQueryClient();
+  return useMutation<void, AxiosError>({
+    mutationFn: async () => {
+      await apiClient.delete(`/questions/${questionId}`);
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: [QUIZZES] });
+    },
+  });
+}
+
 
 export function useAddTopic() {
   const client = useQueryClient();

@@ -31,6 +31,8 @@ import AllCreatorUnverified from "./pages/all-creator-unverified-quizzes/AllCrea
 import CCEditQuiz from "./pages/all-creator-unverified-quizzes/CCEditQuiz";
 import CCAddQuestion from "./pages/all-creator-unverified-quizzes/CCAddQuestion";
 import CCEditQuestion from "./pages/all-creator-unverified-quizzes/CCEditQuestion";
+import AdminQuestionReports from "./pages/admin-question-reports/AdminQuestionReports";
+import DetailQuestionReport from "./pages/admin-question-reports/DetailQuestionReport";
 
 
 
@@ -57,6 +59,9 @@ export const router = createBrowserRouter([
       { path: "unverified/:topicId/edit/:quizId", element: <CCEditQuiz/> },
       { path: "unverified/:topicId/edit/:quizId/add-question", element: <CCAddQuestion /> },
       { path: "unverified/:topicId/edit/:quizId/edit-question/:questionId", element: <CCEditQuestion /> },
+
+      { path: "reports", element: <AdminQuestionReports/> },
+      { path: "reports/:questionId", element: <DetailQuestionReport/> },
 
 
       { path: "lists/:gradeId/:subject/:topicId/edit/:quizId" ,element: <AdminEditQuiz/>}, 
