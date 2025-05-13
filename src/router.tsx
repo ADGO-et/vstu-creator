@@ -33,62 +33,129 @@ import CCAddQuestion from "./pages/all-creator-unverified-quizzes/CCAddQuestion"
 import CCEditQuestion from "./pages/all-creator-unverified-quizzes/CCEditQuestion";
 import AdminQuestionReports from "./pages/admin-question-reports/AdminQuestionReports";
 import DetailQuestionReport from "./pages/admin-question-reports/DetailQuestionReport";
+import ContentFlashCards from "./pages/creator-flashcards/CCFlashCardTable";
+import ContentFlashCardSubjects from "./pages/creator-flashcards/CCFlashCardSubject";
+import AdminAddCards from "./pages/admin-add-flashcard/AdminAddCards";
 
 
 
 export const router = createBrowserRouter([
-  
-
-  {path: "", element: <ContentCreatorSignIn />},
+  { path: "", element: <ContentCreatorSignIn /> },
 
   {
     path: "cc",
     element: <ContentCreatorLayout />,
     children: [
-      { path: "", element: <Navigate replace to={"/cc/add-question"} /> }, 
+      { path: "", element: <Navigate replace to={"/cc/add-question"} /> },
       { path: "profile", element: <CreatorProfile /> },
       { path: "profile/logout", element: <CreatorLogout /> },
-      
+
       { path: "lists", element: <ContentQuizTable /> },
-      { path: "lists/:gradeId", element: <CCQuizzesSubjects/> },
-      { path: "lists/:gradeId/:subjectId", element: <CCQuizzesTopics/> },
-      { path: "lists/:gradeId/:subjectId/:topicId", element: <UnverifiedQuizTable/> },
+      { path: "lists/:gradeId", element: <CCQuizzesSubjects /> },
+      { path: "lists/:gradeId/:subjectId", element: <CCQuizzesTopics /> },
+      {
+        path: "lists/:gradeId/:subjectId/:topicId",
+        element: <UnverifiedQuizTable />,
+      },
 
+      { path: "flashcards", element: <ContentFlashCards /> },
+      { path: "flashcards/:gradeId", element: <ContentFlashCardSubjects /> },
+      {
+        path: "flashcards/:gradeId/:subject/add",
+        element: <AdminAddCards />,
+      },
 
-      { path: "unverified", element: <AllCreatorUnverified/> },
-      { path: "unverified/:topicId/edit/:quizId", element: <CCEditQuiz/> },
-      { path: "unverified/:topicId/edit/:quizId/add-question", element: <CCAddQuestion /> },
-      { path: "unverified/:topicId/edit/:quizId/edit-question/:questionId", element: <CCEditQuestion /> },
+      { path: "unverified", element: <AllCreatorUnverified /> },
+      { path: "unverified/:topicId/edit/:quizId", element: <CCEditQuiz /> },
+      {
+        path: "unverified/:topicId/edit/:quizId/add-question",
+        element: <CCAddQuestion />,
+      },
+      {
+        path: "unverified/:topicId/edit/:quizId/edit-question/:questionId",
+        element: <CCEditQuestion />,
+      },
 
-      { path: "reports", element: <AdminQuestionReports/> },
-      { path: "reports/:questionId", element: <DetailQuestionReport/> },
+      { path: "reports", element: <AdminQuestionReports /> },
+      { path: "reports/:questionId", element: <DetailQuestionReport /> },
 
-
-      { path: "lists/:gradeId/:subject/:topicId/edit/:quizId" ,element: <AdminEditQuiz/>}, 
-      { path: "lists/:gradeId/:subject/:topicId/edit/:quizId/add-question", element: <AdminAddQuestion /> },
-      { path: "lists/:gradeId/:subject/:topicId/edit/:quizId/edit-question/:questionId", element: <AdminEditQuestion /> },
+      {
+        path: "lists/:gradeId/:subject/:topicId/edit/:quizId",
+        element: <AdminEditQuiz />,
+      },
+      {
+        path: "lists/:gradeId/:subject/:topicId/edit/:quizId/add-question",
+        element: <AdminAddQuestion />,
+      },
+      {
+        path: "lists/:gradeId/:subject/:topicId/edit/:quizId/edit-question/:questionId",
+        element: <AdminEditQuestion />,
+      },
 
       { path: "add-question", element: <ContentCreatorDashboard /> },
-      { path: "add-question/quizzes/:gradeId", element: <AdminQuizzesSubjects /> },
-      { path: "add-question/quizzes/:gradeId/:subjectId", element: <AdminQuizTopics />}, 
-      { path: "add-question/quizzes/:gradeId/:subject/add", element: <AdminDataAddTopic />},
-      { path: "add-question/quizzes/:gradeId/:subject/edit/:topicId", element: <AdminDataEditTopic />},
-      { path: "add-question/quizzes/:gradeId/:subject/:topicId", element: <AdminQuizzesQuizzes /> },
-      { path: "add-question/quizzes/:gradeId/:subject/:topicId/add", element: <AdminAddQuiz /> },
-      { path: "add-question/quizzes/:gradeId/:subject/:topicId/edit/:quizId", element: <AdminEditQuiz /> },
-      { path: "add-question/quizzes/:gradeId/:subject/:topicId/edit/:quizId/add-question", element: <AdminAddQuestion /> },
-      { path: "add-question/quizzes/:gradeId/:subject/:topicId/edit/:quizId/edit-question/:questionId", element: <AdminEditQuestion /> },
+      {
+        path: "add-question/quizzes/:gradeId",
+        element: <AdminQuizzesSubjects />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subjectId",
+        element: <AdminQuizTopics />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subject/add",
+        element: <AdminDataAddTopic />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subject/edit/:topicId",
+        element: <AdminDataEditTopic />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subject/:topicId",
+        element: <AdminQuizzesQuizzes />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subject/:topicId/add",
+        element: <AdminAddQuiz />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subject/:topicId/edit/:quizId",
+        element: <AdminEditQuiz />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subject/:topicId/edit/:quizId/add-question",
+        element: <AdminAddQuestion />,
+      },
+      {
+        path: "add-question/quizzes/:gradeId/:subject/:topicId/edit/:quizId/edit-question/:questionId",
+        element: <AdminEditQuestion />,
+      },
 
-      { path: "quizzes", element: <ContestQuizTable />},
-      { path: "quizzes/contests/:gradeId", element: <ContestSubjectTable/>},
-      { path: "quizzes/contests/:gradeId/:subjectId/add", element: <ContestQuizzesTopics/>},
-      { path: "quizzes/contests/:gradeId/:subjectId/add/:topicId", element: <ContestQuizzesQuizzes/>},
-      { path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/add", element: <ContestAddQuiz />},
-      { path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/edit/:quizId", element: <ContestEditQuiz/>},
-      { path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/edit/:quizId/add-question", element: <ContestAddQuestion/>},
-      { path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/edit/:quizId/edit-question/:questionId", element: <ContestEditQuestion/>},
-
-    ]
+      { path: "quizzes", element: <ContestQuizTable /> },
+      { path: "quizzes/contests/:gradeId", element: <ContestSubjectTable /> },
+      {
+        path: "quizzes/contests/:gradeId/:subjectId/add",
+        element: <ContestQuizzesTopics />,
+      },
+      {
+        path: "quizzes/contests/:gradeId/:subjectId/add/:topicId",
+        element: <ContestQuizzesQuizzes />,
+      },
+      {
+        path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/add",
+        element: <ContestAddQuiz />,
+      },
+      {
+        path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/edit/:quizId",
+        element: <ContestEditQuiz />,
+      },
+      {
+        path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/edit/:quizId/add-question",
+        element: <ContestAddQuestion />,
+      },
+      {
+        path: "quizzes/contests/:gradeId/:subjectId/add/:topicId/edit/:quizId/edit-question/:questionId",
+        element: <ContestEditQuestion />,
+      },
+    ],
   },
-
 ]);
