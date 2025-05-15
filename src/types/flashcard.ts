@@ -1,16 +1,8 @@
-export interface Flashcard {
-  id: string;
-  gradeId: string;
-  subjectId: string;
-  question: string;
-  answer: string;
-  createdAt: string;
-  updatedAt: string;
+export interface FlashcardData {
+  _id?: string;
+  subject: string;
+  front: string;
+  back: string;
+  
 }
-
-export interface CreateFlashcardInput {
-  gradeId: string;
-  subjectId: string;
-  question: string;
-  answer: string;
-}
+export type CreateFlashcardInput = Omit<FlashcardData, "_id">;

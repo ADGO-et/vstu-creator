@@ -61,7 +61,7 @@ export const router = createBrowserRouter([
       { path: "flashcards", element: <ContentFlashCards /> },
       { path: "flashcards/:gradeId", element: <ContentFlashCardSubjects /> },
       {
-        path: "flashcards/:gradeId/:subject/add",
+        path: "flashcards/:gradeId/:subjectId/add",
         element: <AdminAddCards />,
       },
 
