@@ -45,7 +45,7 @@ export const useDeleteFlashcard = () => {
 
   return useMutation<AxiosResponse<any>, AxiosError, string>({
     mutationFn: (id) => apiClient.delete(`/flashcard/${id}`),
-    onSuccess: (_data, id) => {
+    onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: ["flashcards"] }); // fallback
     },
   });

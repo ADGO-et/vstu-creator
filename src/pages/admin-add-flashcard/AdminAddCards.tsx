@@ -5,7 +5,7 @@ export default function AdminAddCards() {
   return (
     <div>
       <Back steps={2} />
-      <FlashCardForm isEdit={false} />
+      <FlashCardForm/>
       {/* <p>hello cards</p> */}
     </div>
   );
