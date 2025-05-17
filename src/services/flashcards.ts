@@ -54,17 +54,15 @@ export const useDeleteFlashcard = () => {
 // services/flashcards.ts
 export const useFlashcardsBySubject = (
   subjectId: string,
-  page: number,
   count: number
 ) => {
   return useQuery<FlashcardData[]>({
-    queryKey: ["flashcards", subjectId, page],
+    queryKey: ["flashcards", subjectId, count],
     queryFn: async () => {
       const response = await apiClient.get(`/flashcard`, {
         params: {
           subject: subjectId,
           count,
-          page, // only if your backend supports it
         },
       });
       return response.data;
