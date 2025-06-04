@@ -6,7 +6,7 @@ import { useLanguages } from "@/services/language";
 import {
   useCreateFlashcard,
   useDeleteFlashcard,
-  useFlashcardsBySubject,
+  useAdminFlashcards,
   useUpdateFlashcard,
 } from "@/services/flashcards";
 import { FlashcardData } from "@/types/flashcard";
@@ -39,7 +39,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { Pencil, Trash } from "lucide-react"; // Import icons
+import { Pencil, Trash } from "lucide-react"; 
 
 export default function FlashCardForm() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -55,10 +55,8 @@ export default function FlashCardForm() {
   const itemsPerPage = 6;
 
   const langQ = useLanguages();
-  const flashcardsQuery = useFlashcardsBySubject(
-    actualSubjectId,
-    itemsPerPage
-  );
+  const flashcardsQuery = useAdminFlashcards(actualSubjectId, page, itemsPerPage);
+
   const createFlashcardMutation = useCreateFlashcard();
   const updateFlashcardMutation = useUpdateFlashcard();
   const deleteFlashcardMutation = useDeleteFlashcard();
@@ -85,7 +83,6 @@ export default function FlashCardForm() {
     } else {
       createFlashcardMutation.mutate(flashcard);
     }
-    
 
     setFlashTitle("");
     setAnswer("");
@@ -105,10 +102,9 @@ export default function FlashCardForm() {
     }
   };
 
-  const paginatedFlashcards =
-    flashcardsQuery.data?.slice((page - 1) * itemsPerPage, page * itemsPerPage) || [];
-
-  const totalPages = Math.ceil((flashcardsQuery.data?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil(
+    (flashcardsQuery.data?.totalCount || 0) / itemsPerPage
+  );
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -172,7 +168,7 @@ export default function FlashCardForm() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedFlashcards.map((card) => (
+              {flashcardsQuery.data.flashcards.map((card) => (
                 <TableRow key={card._id}>
                   <TableCell>{card.front}</TableCell>
                   <TableCell>{card.back}</TableCell>
@@ -201,11 +197,17 @@ export default function FlashCardForm() {
                         <p>Are you sure you want to delete this flashcard?</p>
                         <DialogFooter>
                           <DialogPrimitive.Close asChild>
-                            <Button variant="outline" onClick={() => setDeleteId(null)}>
+                            <Button
+                              variant="outline"
+                              onClick={() => setDeleteId(null)}
+                            >
                               Cancel
                             </Button>
                           </DialogPrimitive.Close>
-                          <Button variant="destructive" onClick={handleDeleteConfirm}>
+                          <Button
+                            variant="destructive"
+                            onClick={handleDeleteConfirm}
+                          >
                             Delete
                           </Button>
                         </DialogFooter>
@@ -219,23 +221,31 @@ export default function FlashCardForm() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <Pagination className="mt-4">
+            <Pagination className="mt-4 mb-10">
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={() => handlePageChange(Math.max(page - 1, 1))}
                     // disabled={page === 1}
-                    className={`${page === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`${
+                      page === 1 ? "opacity-50 cursor-not-allowed" : ""
+                    } cursor-pointer`}
                   />
                 </PaginationItem>
                 <PaginationItem>
-                  <span className="px-4">Page {page} of {totalPages}</span>
+                  <span className="px-4">
+                    Page {page} of {totalPages}
+                  </span>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
-                    onClick={() => handlePageChange(Math.min(page + 1, totalPages))}
+                    onClick={() =>
+                      handlePageChange(Math.min(page + 1, totalPages))
+                    }
                     // disabled={page === totalPages}
-                    className={`${page === totalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`${
+                      page === totalPages ? "opacity-50 cursor-not-allowed" : ""
+                    } cursor-pointer`}
                   />
                 </PaginationItem>
               </PaginationContent>

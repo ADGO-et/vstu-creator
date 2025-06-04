@@ -15,7 +15,7 @@ export const useCreateFlashcard = () => {
     mutationFn: (newCard) => apiClient.post("/flashcard", newCard),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["flashcards", variables.subject],
+        queryKey: ["adminFlashcards", variables.subject],
       });
     },
   });
@@ -33,7 +33,7 @@ export const useUpdateFlashcard = () => {
     mutationFn: ({ id, data }) => apiClient.patch(`/flashcard/${id}`, data),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["flashcards", variables.data.subject],
+        queryKey: ["adminFlashcards", variables.data.subject],
       });
     },
   });
@@ -46,7 +46,7 @@ export const useDeleteFlashcard = () => {
   return useMutation<AxiosResponse<any>, AxiosError, string>({
     mutationFn: (id) => apiClient.delete(`/flashcard/${id}`),
     onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: ["flashcards"] }); // fallback
+      queryClient.invalidateQueries({ queryKey: ["adminFlashcards"] }); // fallback
     },
   });
 };
@@ -63,6 +63,28 @@ export const useFlashcardsBySubject = (
         params: {
           subject: subjectId,
           count,
+        },
+      });
+      return response.data;
+    },
+    placeholderData: (previousData) => previousData,
+  });
+};
+
+
+export const useAdminFlashcards = (
+  subjectId: string,
+  page: number,
+  limit: number
+) => {
+  return useQuery<{ flashcards: FlashcardData[]; totalCount: number }>({
+    queryKey: ["adminFlashcards", subjectId, page, limit],
+    queryFn: async () => {
+      const response = await apiClient.get(`/flashcard/admin`, {
+        params: {
+          subject: subjectId,
+          page,
+          limit,
         },
       });
       return response.data;
