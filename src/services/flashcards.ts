@@ -1,10 +1,6 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/axios";
-import { FlashcardData } from "@/types/flashcard";
+import { FlashcardData, FlashcardApiResponse } from "@/types/flashcard";
 import { AxiosResponse, AxiosError } from "axios";
 
 // Create Flashcard
@@ -51,18 +47,22 @@ export const useDeleteFlashcard = () => {
   });
 };
 
-// services/flashcards.ts
+// Get Flashcards with Pagination
 export const useFlashcardsBySubject = (
   subjectId: string,
-  count: number
+  page: number,
+  limit: number
 ) => {
-  return useQuery<FlashcardData[]>({
-    queryKey: ["flashcards", subjectId, count],
+  return useQuery<FlashcardApiResponse>({
+    queryKey: ["flashcards", subjectId, page],
+
     queryFn: async () => {
-      const response = await apiClient.get(`/flashcard`, {
+      const response = await apiClient.get("/flashcard/admin", {
         params: {
           subject: subjectId,
-          count,
+          page,
+          limit,
+
         },
       });
       return response.data;
