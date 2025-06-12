@@ -1,8 +1,7 @@
-// import logo from "@/assets/logos/teletemari.jpg";
 import logo from "@/assets/logos/vstu.png";
+import tele from "@/assets/logos/tele.png"; // ✅ Second logo
 import { Link } from "react-router-dom";
 import Avatar from "../navigation/Avatar";
-// import Notifications from "../navigation/Notifications";
 import { Button } from "../ui/button";
 import {
   Sheet,
@@ -15,36 +14,37 @@ import {
 } from "../ui/sheet";
 import { CClinks } from "./constants/cc-link";
 
-
 export default function CCNav() {
-  // const isLoading = false;
-  // const error = null;
-  // const notifications = null;
   return (
     <div className="container">
-      {/* desktop */}
-      <nav className="hidden md:flex gap-9 items-center py-3">
-        <div className="flex-1">
-          <Link to="/cc/">
-            <img src={logo} alt="teletemari logo" className="max-h-[4.25rem]" />
-          </Link>
-        </div>
-        <div className="flex-1 flex justify-end gap-3 items-center">
-          {/* <Notifications isLoading={isLoading} error={error}>
-            {notifications}
-          </Notifications> */}
+      {/* Desktop */}
+      <nav className="hidden md:flex items-center justify-between py-3">
+        {/* Left logo */}
+        <Link to="/cc/">
+          <img src={tele} alt="vstu logo" className="max-h-[4.25rem]" />
+        </Link>
+
+        {/* Right: Avatar and then Second Logo */}
+        <div className="flex items-center gap-8">
           <Avatar role="creator" />
+          <Link to="/cc/">
+            <img
+              src={logo}
+              alt="teletemari logo"
+              className="max-h-[4.25rem] ml-10"
+            />
+          </Link>
         </div>
       </nav>
 
-      {/* mobile  */}
-      <nav className="flex md:hidden gap-9 items-center py-3">
-        <div className="flex-1">
+      {/* Mobile */}
+      <nav className="flex md:hidden items-center justify-between py-3">
+        <div>
           <Sheet>
             <SheetTrigger asChild>
               <Button>Menu</Button>
             </SheetTrigger>
-            <SheetContent side={"left"}>
+            <SheetContent side="left">
               <SheetHeader className="text-start pb-6 hidden">
                 <SheetTitle>Menu</SheetTitle>
                 <SheetDescription className="hidden">
@@ -62,8 +62,8 @@ export default function CCNav() {
                 </Link>
                 {CClinks.map((link) => (
                   <Link key={link.to} to={link.to}>
-                    <SheetClose key={link.to} asChild className="w-full">
-                      <Button variant={"outline"}>{link.title}</Button>
+                    <SheetClose asChild className="w-full">
+                      <Button variant="outline">{link.title}</Button>
                     </SheetClose>
                   </Link>
                 ))}
@@ -72,7 +72,7 @@ export default function CCNav() {
           </Sheet>
         </div>
 
-        <div className="flex-1 flex justify-end gap-3 items-center">
+        <div className="flex items-center gap-3">
           <Avatar role="creator" />
         </div>
       </nav>

@@ -15,8 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import signin from "@/assets/logos/vstu.png";
-import backgroundImage from "@/assets/back.jpg";
+import logo1 from "@/assets/logos/vstu.png";
+import logo2 from "@/assets/logos/tele.png"; // ✅ Second logo
 import { isEmailOrPhone } from "@/lib/validation-utils";
 
 const formSchema = z.object({
@@ -44,14 +44,26 @@ export default function ContentCreatorSignIn() {
   });
 
   return (
-    <main
-      className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
-      style={{ backgroundImage: `url(${backgroundImage})` }}
-    >
-      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
-      <div className="bg-white bg-opacity-90 p-10 rounded-2xl shadow-xl w-full max-w-lg flex flex-col items-center relative">
-        <img src={signin} className="object-contain max-w-[150px] mb-6" alt="Content Creator Sign In" />
-        <h1 className="text-3xl font-bold text-primary mb-6">Sign in as a Content Creator</h1>
+    <main className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-lg flex flex-col items-center relative">
+        {/* ✅ Logos side by side */}
+        <div className="flex items-center justify-center gap-8 mb-6 ">
+          <img
+            src={logo2}
+            alt="VSTU Logo"
+            className="max-w-[150px] object-contain mr-8"
+          />
+          <img
+            src={logo1}
+            alt="Teletemari Logo"
+            className="max-w-[60px] object-contain ml-8"
+          />
+        </div>
+
+        <h1 className="text-3xl font-bold text-primary mb-6">
+          Sign in as a Content Creator
+        </h1>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((vals) => {
@@ -61,9 +73,15 @@ export default function ContentCreatorSignIn() {
               };
               const isEmail = trimmedVals.emailOrPhone.includes("@");
               if (isEmail) {
-                q.mutate({ email: trimmedVals.emailOrPhone, password: trimmedVals.password });
+                q.mutate({
+                  email: trimmedVals.emailOrPhone,
+                  password: trimmedVals.password,
+                });
               } else {
-                q.mutate({ phoneNumber: trimmedVals.emailOrPhone, password: trimmedVals.password });
+                q.mutate({
+                  phoneNumber: trimmedVals.emailOrPhone,
+                  password: trimmedVals.password,
+                });
               }
             })}
             className="space-y-6 w-full"
