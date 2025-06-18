@@ -36,8 +36,7 @@ import DetailQuestionReport from "./pages/admin-question-reports/DetailQuestionR
 import ContentFlashCards from "./pages/creator-flashcards/CCFlashCardTable";
 import ContentFlashCardSubjects from "./pages/creator-flashcards/CCFlashCardSubject";
 import AdminAddCards from "./pages/admin-add-flashcard/AdminAddCards";
-
-
+import AllCreatorUnverifiedFiltered from "./pages/all-creator-unverified-filtered-quizzes/AllCreatorUnverifiedFiltered";
 
 export const router = createBrowserRouter([
   { path: "", element: <ContentCreatorSignIn /> },
@@ -66,6 +65,7 @@ export const router = createBrowserRouter([
       },
 
       { path: "unverified", element: <AllCreatorUnverified /> },
+      { path: "unverified-quizzes", element: <AllCreatorUnverifiedFiltered /> },
       { path: "unverified/:topicId/edit/:quizId", element: <CCEditQuiz /> },
       {
         path: "unverified/:topicId/edit/:quizId/add-question",
