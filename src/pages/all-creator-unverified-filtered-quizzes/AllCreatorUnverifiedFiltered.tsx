@@ -60,15 +60,18 @@ const AllCreatorUnverifiedFiltered = () => {
   const [jumpPage, setJumpPage] = useState("");
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [isCreatorVerified, setIsCreatorVerified] = useState<string>("false");
+
   var tempgrade = "";
 
   const { data: gradesData } = useGetGrades();
   const { data, isLoading, error, refetch } =
     useGetCreatorUnverifiedQuizzesFiltered({
       page: currentPage,
-      limit,
+      limit: 1000,
       gradeId: selectedGrade || undefined,
       subjectId: selectedSubject || undefined,
+      isCreatorVerified,
     });
 
   const { mutate: verifyQuiz } = useVerifyQuizByCreator();
@@ -133,13 +136,30 @@ const AllCreatorUnverifiedFiltered = () => {
     setSelectedSubject(value);
     setCurrentPage(1);
   };
+  // this are to be removed once the
+  const filteredQuizzes =
+    data?.quizzes?.filter((quiz) => {
+      // Find the selected grade object
+      const gradeObj = gradesData?.find((g) => g._id === selectedGrade);
+      // Get the grade number as string
+      const gradeValue = gradeObj ? gradeObj.grade.toString() : "";
+
+      return (
+        (!selectedGrade || quiz.topic.grade.grade.toString() === gradeValue) &&
+        (!selectedSubject || quiz.topic.subject._id === selectedSubject)
+      );
+    }) || [];
+  const totalPages = Math.ceil(filteredQuizzes.length / limit);
+  const paginatedQuizzes = filteredQuizzes.slice(
+    (currentPage - 1) * limit,
+    currentPage * limit
+  );
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-4xl">Unverified Quizzes</h1>
       <p>List of all unverified quizzes</p>
 
-      {/* Filter Controls */}
       <div className="flex gap-4">
         <div className="w-48">
           <Select onValueChange={handleGradeChange} value={selectedGrade || ""}>
@@ -178,18 +198,25 @@ const AllCreatorUnverifiedFiltered = () => {
             </SelectContent>
           </Select>
         </div>
+        <div className="w-48">
+          <Select
+            onValueChange={setIsCreatorVerified}
+            value={isCreatorVerified}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Verification Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="false">Unverified</SelectItem>
+              <SelectItem value="true">Verified</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <div className="relative h-[460px]">
+      <div className="relative ">
         <AdminTable
-          data={
-            data?.quizzes?.filter(
-              (quiz) =>
-                (!selectedGrade ||
-                  quiz.topic.grade.grade.toString() === tempgrade) &&
-                (!selectedSubject || quiz.topic.subject._id === selectedSubject)
-            ) || null
-          }
+          data={paginatedQuizzes}
           columns={columns}
           isLoading={isLoading}
           error={error}
@@ -216,14 +243,12 @@ const AllCreatorUnverifiedFiltered = () => {
                 <PaginationLink isActive>{currentPage}</PaginationLink>
               </PaginationItem>
               <PaginationItem className="gap-x-2">of</PaginationItem>
-              <PaginationItem className="gap-x-2">
-                {data?.totalPages}
-              </PaginationItem>
+              <PaginationItem className="gap-x-2">{totalPages}</PaginationItem>
               <PaginationItem>
                 <PaginationNext
                   onClick={handleNext}
                   className={
-                    data && currentPage === data.totalPages
+                    data && currentPage === totalPages
                       ? "disabled-class text-gray-500 cursor-not-allowed hover:bg-white hover:text-gray-500"
                       : "cursor-pointer"
                   }
@@ -237,14 +262,14 @@ const AllCreatorUnverifiedFiltered = () => {
               value={jumpPage}
               onChange={(e) => setJumpPage(e.target.value)}
               min="1"
-              max={data?.totalPages || 1}
+              max={totalPages || 1}
               className="border px-2 py-1"
               placeholder="page #"
             />
             <Button
               onClick={() => {
                 const page = parseInt(jumpPage);
-                if (data && page >= 1 && page <= data.totalPages) {
+                if (data && page >= 1 && page <= totalPages) {
                   setCurrentPage(page);
                 }
               }}
