@@ -60,9 +60,9 @@ const AllCreatorUnverifiedFiltered = () => {
   const [jumpPage, setJumpPage] = useState("");
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  var tempgrade = "";
 
   const { data: gradesData } = useGetGrades();
-
   const { data, isLoading, error, refetch } =
     useGetCreatorUnverifiedQuizzesFiltered({
       page: currentPage,
@@ -119,6 +119,7 @@ const AllCreatorUnverifiedFiltered = () => {
   const getSubjectsForGrade = () => {
     if (!selectedGrade || !gradesData) return [];
     const grade = gradesData.find((g) => g._id === selectedGrade);
+    tempgrade = grade?.grade !== undefined ? String(grade.grade) : "";
     return grade ? grade.subjects : [];
   };
 
@@ -181,7 +182,14 @@ const AllCreatorUnverifiedFiltered = () => {
 
       <div className="relative h-[460px]">
         <AdminTable
-          data={data?.quizzes || null}
+          data={
+            data?.quizzes?.filter(
+              (quiz) =>
+                (!selectedGrade ||
+                  quiz.topic.grade.grade.toString() === tempgrade) &&
+                (!selectedSubject || quiz.topic.subject._id === selectedSubject)
+            ) || null
+          }
           columns={columns}
           isLoading={isLoading}
           error={error}
