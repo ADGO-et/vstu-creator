@@ -14,6 +14,11 @@ export const CClinks = [
     to: "/cc/unverified",
     Icon: MdPendingActions,
   },
+  {
+    title: "Unverified Quizzes",
+    to: "/cc/unverified-quizzes",
+    Icon: MdPendingActions,
+  },
 
   { title: "Add flashcards", to: "/cc/flashcards", Icon: IoIosAdd },
 ];

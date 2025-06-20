@@ -141,7 +141,7 @@ export function useEditSingleQuestion() {
     AxiosError,
     {
       questionId: string;
-      question:  { question: string; choices: string[] };
+      question: { question: string; choices: string[] };
     }
   >({
     mutationFn: async ({ question, questionId }) => {
@@ -167,7 +167,6 @@ export function useGetQuestion(questionId: string | null) {
   });
 }
 
-
 export function useDeleteQuestionDirect(questionId: string) {
   const client = useQueryClient();
   return useMutation<void, AxiosError>({
@@ -179,7 +178,6 @@ export function useDeleteQuestionDirect(questionId: string) {
     },
   });
 }
-
 
 export function useAddTopic() {
   const client = useQueryClient();
@@ -548,8 +546,6 @@ export function useGetCreatorVerifiedQuizzes(options?: {
   });
 }
 
-
-
 export function useGetCreatorUnverifiedQuizzes(options?: {
   topicId?: string;
   isEnabled?: boolean;
@@ -563,6 +559,41 @@ export function useGetCreatorUnverifiedQuizzes(options?: {
     queryFn: async () => {
       const queryParams = new URLSearchParams();
       if (topicId) queryParams.append("topic_id", topicId);
+      queryParams.append("isCreatorVerified", "false");
+      const res = await apiClient.get<QuizResponse>(
+        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`
+      );
+      return res.data;
+    },
+  });
+}
+
+export function useGetCreatorUnverifiedQuizzesFiltered(options?: {
+  topicId?: string;
+  gradeId?: string;
+  subjectId?: string;
+  isEnabled?: boolean;
+  page?: number;
+  limit?: number;
+}) {
+  const { topicId, gradeId, subjectId, page = 1, limit = 6 } = options || {};
+  return useQuery<QuizResponse, AxiosError>({
+    queryKey: [
+      QUIZZES,
+      "creator",
+      "unverified",
+      page,
+      limit,
+      topicId,
+      gradeId,
+      subjectId,
+    ],
+    enabled: options?.isEnabled,
+    queryFn: async () => {
+      const queryParams = new URLSearchParams();
+      if (topicId) queryParams.append("topic_id", topicId);
+      if (gradeId) queryParams.append("gradeId", gradeId);
+      if (subjectId) queryParams.append("subjectId", subjectId);
       queryParams.append("isCreatorVerified", "false");
       const res = await apiClient.get<QuizResponse>(
         `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`
