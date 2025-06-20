@@ -25,32 +25,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { QuizType } from "@/types/quiz";
 
-interface Language {
-  _id: string;
-  language: string;
-  slug: string;
-}
-
-interface Subject {
-  _id: string;
-  name: string;
-  language: Language;
-}
-
-interface QuizType {
-  _id: string;
-  quizTitle: string;
-  topic: { subject: Subject; _id: string; grade: string };
-  isAdminVerified: boolean;
-  createdAt: string;
-}
-
-interface Grade {
-  _id: string;
-  grade: number;
-  subjects: Subject[];
-}
+// interface Grade {
+//   _id: string;
+//   grade: number;
+//   subjects: Subject[];
+// }
 
 const columnHelper = createColumnHelper<QuizType>();
 
@@ -61,8 +42,6 @@ const AllCreatorUnverifiedFiltered = () => {
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [isCreatorVerified, setIsCreatorVerified] = useState<string>("false");
-
-  var tempgrade = "";
 
   const { data: gradesData } = useGetGrades();
   const { data, isLoading, error, refetch } =
@@ -122,7 +101,6 @@ const AllCreatorUnverifiedFiltered = () => {
   const getSubjectsForGrade = () => {
     if (!selectedGrade || !gradesData) return [];
     const grade = gradesData.find((g) => g._id === selectedGrade);
-    tempgrade = grade?.grade !== undefined ? String(grade.grade) : "";
     return grade ? grade.subjects : [];
   };
 
@@ -141,10 +119,9 @@ const AllCreatorUnverifiedFiltered = () => {
     data?.quizzes?.filter((quiz) => {
       // Find the selected grade object
       const gradeObj = gradesData?.find((g) => g._id === selectedGrade);
-      // Get the grade number as string
       const gradeValue = gradeObj ? gradeObj.grade.toString() : "";
-
       return (
+        // @ts-ignore
         (!selectedGrade || quiz.topic.grade.grade.toString() === gradeValue) &&
         (!selectedSubject || quiz.topic.subject._id === selectedSubject)
       );
@@ -154,7 +131,7 @@ const AllCreatorUnverifiedFiltered = () => {
     (currentPage - 1) * limit,
     currentPage * limit
   );
-
+  console.log(filteredQuizzes[0]);
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-4xl">Unverified Quizzes</h1>
@@ -216,6 +193,7 @@ const AllCreatorUnverifiedFiltered = () => {
 
       <div className="relative ">
         <AdminTable
+          // @ts-ignore
           data={paginatedQuizzes}
           columns={columns}
           isLoading={isLoading}
