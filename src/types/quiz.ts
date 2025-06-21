@@ -111,6 +111,18 @@ export interface Quiz {
   for: "QUIZ" | "CONTEST";
 }
 
+export interface QuizType {
+  _id: string;
+  questions: Question[];
+  topic: Topic;
+  quizTitle: string;
+  description: string;
+  language: Language;
+  takenCount: number;
+  createdAt: string;
+  isAdminVerified: boolean;
+  for: "QUIZ" | "CONTEST";
+}
 export interface QuizResponse {
   quizzes: Quiz[];
   totalCount: number;
@@ -126,10 +138,7 @@ interface Subject {
 //New Model
 export interface Topic {
   _id: string;
-  grade: {
-    _id: string;
-    grade: number;
-  };
+  grade: { grade: number; _id?: string };
   subject: Subject;
   chapter: number;
   chapterTitle: string;
