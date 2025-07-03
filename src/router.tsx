@@ -76,6 +76,16 @@ export const router = createBrowserRouter([
         element: <CCEditQuestion />,
       },
 
+      { path: "unverified-quizzes/:topicId/edit/:quizId", element: <CCEditQuiz /> },
+      {
+        path: "unverified-quizzes/:topicId/edit/:quizId/add-question",
+        element: <CCAddQuestion />,
+      },
+      {
+        path: "unverified-quizzes/:topicId/edit/:quizId/edit-question/:questionId",
+        element: <CCEditQuestion />,
+      },
+// ##############################################
       { path: "reports", element: <AdminQuestionReports /> },
       { path: "reports/:questionId", element: <DetailQuestionReport /> },
 
