@@ -6,7 +6,7 @@
 }
 
 * {
-  font-family: "Feather Bold", sans-serif;
+  /* font-family: "Feather Bold", sans-serif; */
 }
 
 @tailwind base;

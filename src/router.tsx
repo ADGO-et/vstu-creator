@@ -37,9 +37,11 @@ import ContentFlashCards from "./pages/creator-flashcards/CCFlashCardTable";
 import ContentFlashCardSubjects from "./pages/creator-flashcards/CCFlashCardSubject";
 import AdminAddCards from "./pages/admin-add-flashcard/AdminAddCards";
 import AllCreatorUnverifiedFiltered from "./pages/all-creator-unverified-filtered-quizzes/AllCreatorUnverifiedFiltered";
+import SignIn from "./pages/content-creator-sign-in/Signin";
 
 export const router = createBrowserRouter([
-  { path: "", element: <ContentCreatorSignIn /> },
+  // { path: "", element: <ContentCreatorSignIn /> },
+  { path: "", element: <SignIn/> },
 
   {
     path: "cc",
