@@ -10,7 +10,7 @@ import AdminDataEditTopic from "./pages/admin-quizzes-edit-topic/AdminQuizzesEdi
 import AdminQuizzesQuizzes from "./pages/admin-quizzes-quizzes/AdminQuizzesQuizzes";
 import AdminQuizzesSubjects from "./pages/admin-quizzes-subjects/AdminQuizzesSubjects";
 import AdminQuizTopics from "./pages/admin-quizzes-topics/AdminQuizzesTopics";
-import ContentCreatorSignIn from "./pages/content-creator-sign-in/ContentCreatorSignIn";
+// import ContentCreatorSignIn from "./pages/content-creator-sign-in/ContentCreatorSignIn";
 import ContentCreatorLayout from "./components/content-creator-layout/ContentCreatorLayout";
 import ContentCreatorDashboard from "./pages/content-creator-dashboard/ContentCreatorDashboard";
 import CreatorProfile from "./components/content-creator-layout/ccProfile";
@@ -38,10 +38,18 @@ import ContentFlashCardSubjects from "./pages/creator-flashcards/CCFlashCardSubj
 import AdminAddCards from "./pages/admin-add-flashcard/AdminAddCards";
 import AllCreatorUnverifiedFiltered from "./pages/all-creator-unverified-filtered-quizzes/AllCreatorUnverifiedFiltered";
 import SignIn from "./pages/content-creator-sign-in/Signin";
+import SalesLayout from "./components/sales-layout/SalesLayout";
+import TeacherLayout from "./components/teacher-layout/TeacherLayout";
+import Signup from "./pages/signup/Signup";
+import TeacherProfile from "./pages/teacher-profile/TeacherProfile";
+import TeacherReferal from "./pages/teacher-referal-page/TeacherReferal";
+import SalesProfile from "./pages/sales-profile/SalesProfile";
+import SalesReferal from "./pages/sales-referal-page/SalesReferal";
 
 export const router = createBrowserRouter([
   // { path: "", element: <ContentCreatorSignIn /> },
   { path: "", element: <SignIn/> },
+  { path: "signup", element: <Signup/> },
 
   {
     path: "cc",
@@ -170,4 +178,25 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
+  {
+    path: "sales",
+    element: <SalesLayout />,
+    children: [
+      { path: "", element: <Navigate replace to={"/sales/referal"} /> },
+      { path: "profile", element: <SalesProfile/> },
+      { path: "referal", element: <SalesReferal/> },
+    ]
+  },  
+
+  {
+    path: "teacher",
+    element: <TeacherLayout />,
+    children:[
+      { path: "", element: <Navigate replace to={"/teacher/referal"} /> },
+      { path: "profile", element: <TeacherProfile /> },
+      { path: "referal", element: <TeacherReferal /> },
+
+    ]
+  }
 ]);

@@ -1,11 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import AddSidebar from "../navigation/AddSidebar";
-import { CClinks } from "./constants/cc-link";
-import CCNav from "./ccNav";
+import TeacherNav from "./TeacherNav";
+import { TeacherLinks } from "./constants/teacher-links";
 
-
-export default function ContentCreatorLayout() {
+export default function TeacherLayout() {
   const location = useLocation();
   const navRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -32,7 +31,7 @@ export default function ContentCreatorLayout() {
     >
       {/* Fixed sidebar (full height) */}
       <AddSidebar
-        links={CClinks}
+        links={TeacherLinks}
         collapsed={sidebarCollapsed}
         onCollapsedChange={setSidebarCollapsed}
       />
@@ -42,7 +41,7 @@ export default function ContentCreatorLayout() {
         ref={navRef}
         className="fixed top-0 right-0 z-40 bg-white border-b left-[var(--sidebar-width)]"
       >
-        <CCNav showLogo={sidebarCollapsed} />
+        <TeacherNav showLogo={sidebarCollapsed} />
       </div>
 
       {/* Scrollable main area below navbar */}
@@ -54,7 +53,7 @@ export default function ContentCreatorLayout() {
         }}
       >
         <div ref={scrollRef} className="h-full overflow-y-auto px-0">
-          <main className="pt-6 container mt-6">
+          <main className="pt-6 container">
             <Outlet />
           </main>
         </div>

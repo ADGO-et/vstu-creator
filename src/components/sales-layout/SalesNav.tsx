@@ -12,23 +12,23 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import ethiotelecom from '@/assets/logos/Ethiotelecom.png';
-import { CClinks } from "./constants/cc-link";
+import { SalesLinks } from "./constants/sales-links";
 
-export default function CCNav({ showLogo = false }: { showLogo?: boolean }) {
+export default function SalesNav({ showLogo = false }: { showLogo?: boolean }) {
   return (
     <div className="container">
       {/* desktop */}
       <nav className="hidden md:flex items-center">
         {
           showLogo && (
-            <Link to="/cc" className="mr-4">
+            <Link to="/sales/referal" className="mr-4">
             <img src={ethiotelecom} alt="teletemari logo" className="max-h-[4.5rem]" />
           </Link>
           )
         }
         <div className="flex-1 flex justify-end gap-3 items-center">
-          <Avatar role="creator" />
-          <Link to="/cc" className="mr-4">
+          <Avatar role="Sales" />
+          <Link to="/sales/referal" className="mr-4">
             <img src={logo} alt="teletemari logo" className="max-h-[4.5rem]" />
           </Link>
           {/* logo removed here when expanded per requirement */}
@@ -58,7 +58,7 @@ export default function CCNav({ showLogo = false }: { showLogo?: boolean }) {
                     className="max-h-[2.25rem]"
                   />
                 </Link>
-                {CClinks.map((link) => (
+                {SalesLinks.map((link) => (
                   <Link key={link.to} to={link.to}>
                     <SheetClose key={link.to} asChild className="w-full">
                       <Button variant={"outline"}>{link.title}</Button>
@@ -71,7 +71,7 @@ export default function CCNav({ showLogo = false }: { showLogo?: boolean }) {
         </div>
 
         <div className="flex-1 flex justify-end gap-3 items-center">
-          <Avatar role="creator" />
+          <Avatar role="Sales" />
         </div>
       </nav>
     </div>

@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/axios";
 import {
   LoginCreator,
+  LoginTeacherAndSales,
   Parent,
   Student,
 } from "@/types/user";
@@ -21,6 +22,28 @@ export function useContentCreatorSignin({ onSuccess }: { onSuccess: () => void }
     retry: 1,
   });
 }
+
+export function useTeacherSignin({ onSuccess }: { onSuccess: () => void }) {
+  return useMutation<void, AxiosError, LoginTeacherAndSales>({
+    mutationFn: async (info: LoginTeacherAndSales) => {
+      await apiClient.post("/login/teacher", info);
+    },
+    onSuccess,
+    retry: 1,
+  });
+}
+
+
+export function useSalesSignin({ onSuccess }: { onSuccess: () => void }) {
+  return useMutation<void, AxiosError, LoginTeacherAndSales>({
+    mutationFn: async (info: LoginTeacherAndSales) => {
+      await apiClient.post("/login/sales", info);
+    },
+    onSuccess,
+    retry: 1,
+  });
+}
+
 
 export const useGetStudent = (studentId: string) => {
   return useQuery<Student, AxiosError>({
@@ -73,3 +96,4 @@ export function useLogout() {
     },
   });
 }
+

@@ -1,11 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import AddSidebar from "../navigation/AddSidebar";
-import { CClinks } from "./constants/cc-link";
-import CCNav from "./ccNav";
+import { SalesLinks } from "./constants/sales-links";
+import SalesNav from "./SalesNav";
 
-
-export default function ContentCreatorLayout() {
+export default function SalesLayout() {
   const location = useLocation();
   const navRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -32,7 +31,7 @@ export default function ContentCreatorLayout() {
     >
       {/* Fixed sidebar (full height) */}
       <AddSidebar
-        links={CClinks}
+        links={SalesLinks}
         collapsed={sidebarCollapsed}
         onCollapsedChange={setSidebarCollapsed}
       />
@@ -42,7 +41,7 @@ export default function ContentCreatorLayout() {
         ref={navRef}
         className="fixed top-0 right-0 z-40 bg-white border-b left-[var(--sidebar-width)]"
       >
-        <CCNav showLogo={sidebarCollapsed} />
+        <SalesNav showLogo={sidebarCollapsed} />
       </div>
 
       {/* Scrollable main area below navbar */}
