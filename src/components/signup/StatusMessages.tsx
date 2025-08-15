@@ -7,7 +7,7 @@ interface StatusMessagesProps {
   onReset: () => void;
 }
 
-export function StatusMessages({ error, success, onReset }: StatusMessagesProps) {
+export function StatusMessages({ error, success }: StatusMessagesProps) {
   if (!error && !success) return null;
 
   return (
