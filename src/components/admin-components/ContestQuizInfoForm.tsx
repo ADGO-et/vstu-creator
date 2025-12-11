@@ -15,6 +15,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import ErrorMessage from "../status/ErrorMessage";
 import LoadingBox from "../status/LoadingBox";
 
+const DIFFICULTIES = ["EASY", "MEDIUM", "HARD"] as const;
+type Difficulty = (typeof DIFFICULTIES)[number];
+
 export default function ContestQuizInfoForm({ isEdit }: { isEdit: boolean }) {
   const { topicId, quizId } = useParams<{ topicId: string; quizId: string }>();
   if (!topicId) throw new Error("Subject is required in route");
@@ -31,11 +34,14 @@ export default function ContestQuizInfoForm({ isEdit }: { isEdit: boolean }) {
   const addQ = useAddQuiz();
   const editQ = useEditQuiz();
 
+  const [difficulty, setDifficulty] = useState<Difficulty>("MEDIUM");
+
   useEffect(() => {
     if (getQ.data) {
       setQuizTitle(getQ.data.quizTitle);
       setDescription(getQ.data.description || "");
       // setLanguage(getQ.data.language._id);
+      setDifficulty(getQ.data.difficulty || "MEDIUM");
     }
   }, [getQ.data]);
 
@@ -52,7 +58,8 @@ export default function ContestQuizInfoForm({ isEdit }: { isEdit: boolean }) {
         description,
         topic: topicId,
         questions: getQ.data.questions.map((q) => q._id),
-        for: 'CONTEST'
+        for: "CONTEST",
+        difficulty,
       };
 
       editQ.mutate({ id: quizId || "-", quiz });
@@ -63,9 +70,13 @@ export default function ContestQuizInfoForm({ isEdit }: { isEdit: boolean }) {
         description,
         topic: topicId,
         questions: [],
-        for: 'CONTEST'
+        for: "CONTEST",
+        // isCreatorVerified: true,
+        // isAdminVerified: true,
+        difficulty,
+        createdBy: "Teacher",
       };
-    
+
       addQ.mutate(quiz, {
         onSuccess: (id) => {
           navigate(`../edit/${id}`, { relative: "path" });
@@ -73,7 +84,6 @@ export default function ContestQuizInfoForm({ isEdit }: { isEdit: boolean }) {
       });
     }
   };
-
 
   const navigate = useNavigate();
   return (
@@ -116,7 +126,20 @@ export default function ContestQuizInfoForm({ isEdit }: { isEdit: boolean }) {
               onChange={(e) => setDescription(e.target.value)}
             />
           </Label>
-
+          <Label className="flex flex-col gap-3">
+            <span>Difficulty </span>
+            <select
+              className="h-11 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+            >
+              {DIFFICULTIES.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </Label>
           <ErrorMessage error={addQ.error || editQ.error} />
         </form>
       )}

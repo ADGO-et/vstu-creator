@@ -45,6 +45,7 @@ export default function AddEditQuestion({ isEdit }: { isEdit: boolean }) {
         {
           questionId,
           question: { question, choices, questionFlagged, answerFlagged },
+          createdBy: "Teacher",
         },
         {
           onSuccess: () => {
@@ -54,7 +55,7 @@ export default function AddEditQuestion({ isEdit }: { isEdit: boolean }) {
       );
     } else {
       addQ.mutate(
-        { quizId, question: { question, choices } },
+        { quizId, question: { question, choices }, createdBy: "Teacher" },
         {
           onSuccess: () => {
             navigate("..", { relative: "path" });

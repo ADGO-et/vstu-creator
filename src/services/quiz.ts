@@ -278,15 +278,16 @@ export function useAddQuestion() {
   return useMutation<
     void,
     AxiosError,
-    { quizId: string; question: AddQuestion }
+    { quizId: string; question: AddQuestion; createdBy: string }
   >({
-    mutationFn: async ({ quizId, question }) => {
+    mutationFn: async ({ quizId, question, createdBy }) => {
       const id = (await apiClient.post<{ _id: string }>(`/questions`, question))
         .data._id;
 
       const quiz = await apiClient.get<Quiz>(`/quizzes/${quizId}`);
       await apiClient.patch(`/quizzes/${quizId}`, {
         questions: [...quiz.data.questions.map((q) => q._id), id],
+        createdBy,
       });
     },
     onSuccess: () => {

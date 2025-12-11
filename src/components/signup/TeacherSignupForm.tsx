@@ -1,28 +1,55 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 // import type { TeacherSignupData } from "@/types/signup"
-import { Loader2, User, Mail, Phone, Calendar, Users, GraduationCap, BookOpen, MapPin } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { useLanguages } from "@/services/language"
-import { useGetAllSchools } from "@/services/school"
-import { useGetGrades } from "@/services/grade"
-import { WritableDropdown } from "@/components/ui/writable-dropdown"
-import { getLocalLabel } from "@/lib/lang-utils"
-import { getAllRegions, getAllWoredas, getAllZones } from "@/lib/location-utils"
-import { useState, useEffect } from "react"
-import ErrorMessage from "@/components/status/ErrorMessage"
-import LoadingBox from "@/components/status/LoadingBox"
-import ReactSelect from "react-select"
-import type { MultiValue } from "react-select"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import {useCreateTeacherAccount} from '@/services/teacher';
+import {
+  Loader2,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Users,
+  GraduationCap,
+  BookOpen,
+  MapPin,
+} from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useLanguages } from "@/services/language";
+import { useGetAllSchools } from "@/services/school";
+import { useGetGrades } from "@/services/grade";
+import { WritableDropdown } from "@/components/ui/writable-dropdown";
+import { getLocalLabel } from "@/lib/lang-utils";
+import {
+  getAllRegions,
+  getAllWoredas,
+  getAllZones,
+} from "@/lib/location-utils";
+import { useState, useEffect } from "react";
+import ErrorMessage from "@/components/status/ErrorMessage";
+import LoadingBox from "@/components/status/LoadingBox";
+import ReactSelect from "react-select";
+import type { MultiValue } from "react-select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useCreateTeacherAccount } from "@/services/teacher";
 import { TeacherPayload } from "@/types/teacher";
-import Success from "@/components/status/Success"
+import Success from "@/components/status/Success";
 
 // interface TeacherSignupFormProps {
 //   onSubmit: (data: TeacherPayload) => void
@@ -80,7 +107,7 @@ const teacherSignupSchema = z.object({
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
   }),
-})
+});
 
 // Custom styles for react-select to match shadcn/ui theme
 const selectStyles = {
@@ -114,21 +141,29 @@ const selectStyles = {
   }),
   option: (provided: any, state: any) => ({
     ...provided,
-    backgroundColor: state.isSelected ? "hsl(var(--primary))" : state.isFocused ? "hsl(var(--accent))" : "transparent",
-    color: state.isSelected ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))",
+    backgroundColor: state.isSelected
+      ? "hsl(var(--primary))"
+      : state.isFocused
+      ? "hsl(var(--accent))"
+      : "transparent",
+    color: state.isSelected
+      ? "hsl(var(--primary-foreground))"
+      : "hsl(var(--foreground))",
   }),
-}
+};
 
 export function TeacherSignupForm() {
-  const [selectedGradeIds, setSelectedGradeIds] = useState<string[]>([])
-  const [grades, setGrades] = useState<{ label: string; value: string }[]>([])
-  const [languages, setLanguages] = useState<{ label: string; value: string }[]>([])
+  const [selectedGradeIds, setSelectedGradeIds] = useState<string[]>([]);
+  const [grades, setGrades] = useState<{ label: string; value: string }[]>([]);
+  const [languages, setLanguages] = useState<
+    { label: string; value: string }[]
+  >([]);
   const [availableSubjectGroups, setAvailableSubjectGroups] = useState<
     { label: string; options: { label: string; value: string }[] }[]
-  >([])
-  const [submitError, setSubmitError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const { mutate: signup, isPending: isSubmitting } = useCreateTeacherAccount()
+  >([]);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const { mutate: signup, isPending: isSubmitting } = useCreateTeacherAccount();
 
   const form = useForm<z.infer<typeof teacherSignupSchema>>({
     resolver: zodResolver(teacherSignupSchema),
@@ -149,14 +184,14 @@ export function TeacherSignupForm() {
       zone: "",
       password: "",
     },
-  })
+  });
 
-  const formState = form.watch()
-  const isNewWoreda = !getAllWoredas().find((w) => w.name === formState.woreda)
+  const formState = form.watch();
+  const isNewWoreda = !getAllWoredas().find((w) => w.name === formState.woreda);
 
-  const schoolQ = useGetAllSchools()
-  const gradesQ = useGetGrades()
-  const langsQ = useLanguages()
+  const schoolQ = useGetAllSchools();
+  const gradesQ = useGetGrades();
+  const langsQ = useLanguages();
 
   useEffect(() => {
     if (gradesQ.data) {
@@ -166,18 +201,20 @@ export function TeacherSignupForm() {
           .slice()
           .sort((a, b) => a.grade - b.grade)
           .map((g) => ({ label: `Grade ${g.grade}`, value: g._id }))
-      )
+      );
     }
     if (langsQ.data) {
-      setLanguages(langsQ.data.map((l) => ({ label: getLocalLabel(l), value: l._id })))
+      setLanguages(
+        langsQ.data.map((l) => ({ label: getLocalLabel(l), value: l._id }))
+      );
     }
-  }, [gradesQ.data, langsQ.data])
+  }, [gradesQ.data, langsQ.data]);
 
   useEffect(() => {
     if (gradesQ.data) {
       const groups = selectedGradeIds
         .map((id) => {
-          const gradeObj = gradesQ.data.find((g) => g._id === id)
+          const gradeObj = gradesQ.data.find((g) => g._id === id);
           if (gradeObj) {
             return {
               label: `Grade ${gradeObj.grade}`,
@@ -185,85 +222,113 @@ export function TeacherSignupForm() {
                 label: subject.name,
                 value: subject._id,
               })),
-            }
+            };
           }
-          return null
+          return null;
         })
         .filter((group) => group !== null) as {
-        label: string
-        options: { label: string; value: string }[]
-      }[]
-      setAvailableSubjectGroups(groups)
+        label: string;
+        options: { label: string; value: string }[];
+      }[];
+      setAvailableSubjectGroups(groups);
 
       // Clear selected subjects if they're no longer available
-      const availableSubjectIds = groups.flatMap((g) => g.options.map((o) => o.value))
-      const currentSubjects = form.getValues("subjectIds")
-      const validSubjects = currentSubjects.filter((id) => availableSubjectIds.includes(id))
+      const availableSubjectIds = groups.flatMap((g) =>
+        g.options.map((o) => o.value)
+      );
+      const currentSubjects = form.getValues("subjectIds");
+      const validSubjects = currentSubjects.filter((id) =>
+        availableSubjectIds.includes(id)
+      );
       if (validSubjects.length !== currentSubjects.length) {
-        form.setValue("subjectIds", validSubjects)
+        form.setValue("subjectIds", validSubjects);
       }
     }
-  }, [selectedGradeIds, gradesQ.data, form])
+  }, [selectedGradeIds, gradesQ.data, form]);
 
   const getErrorMessage = (err: any): string => {
-    if (!err) return "An unexpected error occurred. Please try again."
-    const respData = err?.response?.data
-    if (typeof respData === "string") return respData
-    if (respData && typeof respData.message === "string") return respData.message
-    if (typeof err.message === "string") return err.message
+    if (!err) return "An unexpected error occurred. Please try again.";
+    const respData = err?.response?.data;
+    if (typeof respData === "string") return respData;
+    if (respData && typeof respData.message === "string")
+      return respData.message;
+    if (typeof err.message === "string") return err.message;
     try {
-      return JSON.stringify(respData || err)
+      return JSON.stringify(respData || err);
     } catch {
-      return "An unexpected error occurred. Please try again."
+      return "An unexpected error occurred. Please try again.";
     }
-  }
+  };
 
-  const handleGradeChange = (selectedOptions: MultiValue<{ value: string; label: string }> | null) => {
-    const ids = selectedOptions ? Array.from(selectedOptions).map((option) => option.value) : []
-    setSelectedGradeIds(ids)
-    form.setValue("gradeIds", ids)
-    form.trigger("gradeIds")
-  }
+  const handleGradeChange = (
+    selectedOptions: MultiValue<{ value: string; label: string }> | null
+  ) => {
+    const ids = selectedOptions
+      ? Array.from(selectedOptions).map((option) => option.value)
+      : [];
+    setSelectedGradeIds(ids);
+    form.setValue("gradeIds", ids);
+    form.trigger("gradeIds");
+  };
 
-  const handleLanguageChange = (selectedOptions: readonly { value: string; label: string }[] | null) => {
-    const ids = selectedOptions ? Array.from(selectedOptions).map((option) => option.value) : []
-    form.setValue("languages", ids)
-    form.trigger("languages")
-  }
+  const handleLanguageChange = (
+    selectedOptions: readonly { value: string; label: string }[] | null
+  ) => {
+    const ids = selectedOptions
+      ? Array.from(selectedOptions).map((option) => option.value)
+      : [];
+    form.setValue("languages", ids);
+    form.trigger("languages");
+  };
 
-  const handleSubjectChange = (selectedOptions: readonly { value: string; label: string }[] | null) => {
-    const ids = selectedOptions ? Array.from(selectedOptions).map((option) => option.value) : []
-    form.setValue("subjectIds", ids)
-    form.trigger("subjectIds")
-  }
+  const handleSubjectChange = (
+    selectedOptions: readonly { value: string; label: string }[] | null
+  ) => {
+    const ids = selectedOptions
+      ? Array.from(selectedOptions).map((option) => option.value)
+      : [];
+    form.setValue("subjectIds", ids);
+    form.trigger("subjectIds");
+  };
 
   const handleSubmit = async (values: z.infer<typeof teacherSignupSchema>) => {
     try {
-      setSubmitError(null)
+      setSubmitError(null);
 
       // Additional validation
       if (values.age < 18 || values.age > 100) {
-        setSubmitError("Please enter a valid age between 18 and 100.")
-        return
+        setSubmitError("Please enter a valid age between 18 and 100.");
+        return;
       }
 
       if (values.teachingExperience < 0 || values.teachingExperience > 50) {
-        setSubmitError("Please enter valid years of teaching experience.")
-        return
+        setSubmitError("Please enter valid years of teaching experience.");
+        return;
       }
 
       // Validate that subjects are available for selected grades
-      const availableSubjectIds = availableSubjectGroups.flatMap((g) => g.options.map((o) => o.value))
-      const invalidSubjects = values.subjectIds.filter((id) => !availableSubjectIds.includes(id))
+      const availableSubjectIds = availableSubjectGroups.flatMap((g) =>
+        g.options.map((o) => o.value)
+      );
+      const invalidSubjects = values.subjectIds.filter(
+        (id) => !availableSubjectIds.includes(id)
+      );
       if (invalidSubjects.length > 0) {
-        setSubmitError("Some selected subjects are not available for the chosen grades. Please review your selections.")
-        return
+        setSubmitError(
+          "Some selected subjects are not available for the chosen grades. Please review your selections."
+        );
+        return;
       }
 
       // If it's a new school (isSchoolName is true), ensure location fields are provided
-      if (values.isSchoolName && (!values.woreda || !values.region || !values.zone)) {
-        setSubmitError("Please provide complete location information for the new school.")
-        return
+      if (
+        values.isSchoolName &&
+        (!values.woreda || !values.region || !values.zone)
+      ) {
+        setSubmitError(
+          "Please provide complete location information for the new school."
+        );
+        return;
       }
 
       const transformedValues: TeacherPayload = {
@@ -284,47 +349,50 @@ export function TeacherSignupForm() {
         teachingExperience: values.teachingExperience,
         school: values.schoolId,
         password: values.password,
-      }
+      };
       signup(transformedValues, {
         onSuccess: () => {
-          setSuccess(true)
+          setSuccess(true);
         },
         onError: (e: any) => {
-          setSubmitError(getErrorMessage(e))
+          setSubmitError(getErrorMessage(e));
         },
-      })
+      });
     } catch (error) {
-      console.error("Form submission error:", error)
-      setSubmitError(getErrorMessage(error))
+      console.error("Form submission error:", error);
+      setSubmitError(getErrorMessage(error));
     }
-  }
+  };
 
   // Early return on success
   if (success) {
-    return <Success message="Teacher account created successfully" />
+    return <Success message="Teacher account created successfully" />;
   }
 
   const retry = () => {
-    if (!gradesQ.data) gradesQ.refetch()
-    if (!schoolQ.data) schoolQ.refetch()
-    if (!langsQ.data) langsQ.refetch()
-  }
+    if (!gradesQ.data) gradesQ.refetch();
+    if (!schoolQ.data) schoolQ.refetch();
+    if (!langsQ.data) langsQ.refetch();
+  };
 
-  const isLoadingData = schoolQ.isLoading || gradesQ.isLoading || langsQ.isLoading
-  const dataError = schoolQ.error || gradesQ.error || langsQ.error
-  const showForm = schoolQ.data && gradesQ.data && langsQ.data
+  const isLoadingData =
+    schoolQ.isLoading || gradesQ.isLoading || langsQ.isLoading;
+  const dataError = schoolQ.error || gradesQ.error || langsQ.error;
+  const showForm = schoolQ.data && gradesQ.data && langsQ.data;
 
   return (
     <div className="min-h-screen">
       <Card className="w-full max-w-4xl mx-auto border bg-white/95 backdrop-blur-sm">
-
         <CardContent className="p-8">
           <LoadingBox isLoading={isLoadingData} />
           <ErrorMessage error={dataError} retry={retry} />
 
           {showForm && (
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="space-y-8"
+              >
                 {/* Personal Information Section */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 text-lg font-semibold text-slate-700 border-b border-slate-200 pb-2">
@@ -338,7 +406,9 @@ export function TeacherSignupForm() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-700 font-medium">First Name</FormLabel>
+                          <FormLabel className="text-slate-700 font-medium">
+                            First Name
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your first name"
@@ -356,7 +426,9 @@ export function TeacherSignupForm() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-700 font-medium">Last Name</FormLabel>
+                          <FormLabel className="text-slate-700 font-medium">
+                            Last Name
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your last name"
@@ -415,24 +487,26 @@ export function TeacherSignupForm() {
                       )}
                     />
                   </div>
-                   <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-slate-700 font-medium">Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter your password"
-                              type="password"
-                              className="h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-700 font-medium">
+                          Password
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your password"
+                            type="password"
+                            className="h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <FormField
@@ -452,7 +526,16 @@ export function TeacherSignupForm() {
                               max="100"
                               className="h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                               {...field}
-                              onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 18)}
+                              value={
+                                field.value === undefined ||
+                                field.value === null
+                                  ? ""
+                                  : field.value
+                              }
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                field.onChange(v === "" ? "" : Number(v));
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -465,8 +548,13 @@ export function TeacherSignupForm() {
                       name="gender"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-700 font-medium">Gender</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
+                          <FormLabel className="text-slate-700 font-medium">
+                            Gender
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger className="h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
                                 <SelectValue placeholder="Select gender" />
@@ -487,7 +575,9 @@ export function TeacherSignupForm() {
                       name="teachingExperience"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-700 font-medium">Years of Experience</FormLabel>
+                          <FormLabel className="text-slate-700 font-medium">
+                            Years of Experience
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="5"
@@ -496,7 +586,11 @@ export function TeacherSignupForm() {
                               max="50"
                               className="h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                               {...field}
-                              onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 0)}
+                              onChange={(e) =>
+                                field.onChange(
+                                  Number.parseInt(e.target.value) || 0
+                                )
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -518,7 +612,9 @@ export function TeacherSignupForm() {
                     name="schoolId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-700 font-medium">School</FormLabel>
+                        <FormLabel className="text-slate-700 font-medium">
+                          School
+                        </FormLabel>
                         <FormControl>
                           <WritableDropdown
                             options={schoolQ.data.schools
@@ -529,14 +625,17 @@ export function TeacherSignupForm() {
                               .sort((a, b) => (a.label < b.label ? -1 : 1))}
                             value={field.value?.toString()}
                             onValueChange={(v) => {
-                              const school = schoolQ.data.schools.find((s) => s._id === v)
-                              const isSchoolName = v !== "" && school === undefined
-                              form.setValue("isSchoolName", isSchoolName)
-                              field.onChange(v)
+                              const school = schoolQ.data.schools.find(
+                                (s) => s._id === v
+                              );
+                              const isSchoolName =
+                                v !== "" && school === undefined;
+                              form.setValue("isSchoolName", isSchoolName);
+                              field.onChange(v);
                               if (!isSchoolName && school) {
-                                form.setValue("woreda", school.woreda || "")
-                                form.setValue("region", school.region || "")
-                                form.setValue("zone", school.zone || "")
+                                form.setValue("woreda", school.woreda || "");
+                                form.setValue("region", school.region || "");
+                                form.setValue("zone", school.zone || "");
                               }
                             }}
                           />
@@ -553,21 +652,35 @@ export function TeacherSignupForm() {
                         name="woreda"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Woreda</FormLabel>
+                            <FormLabel className="text-slate-700 font-medium">
+                              Woreda
+                            </FormLabel>
                             <FormControl>
                               <WritableDropdown
                                 options={getAllWoredas()
                                   .map((w) => ({
-                                    label: w.name + (w.hasDuplicate ? ` (${w.zone.name})` : ""),
+                                    label:
+                                      w.name +
+                                      (w.hasDuplicate
+                                        ? ` (${w.zone.name})`
+                                        : ""),
                                     value: w.name,
                                   }))
                                   .sort((a, b) => (a.label < b.label ? -1 : 1))}
                                 value={field.value}
                                 onValueChange={(woredaName) => {
-                                  field.onChange(woredaName)
-                                  const woreda = getAllWoredas().find((w) => w.name === woredaName)
-                                  form.setValue("zone", woreda?.zone.name || "")
-                                  form.setValue("region", woreda?.zone.region.name || "")
+                                  field.onChange(woredaName);
+                                  const woreda = getAllWoredas().find(
+                                    (w) => w.name === woredaName
+                                  );
+                                  form.setValue(
+                                    "zone",
+                                    woreda?.zone.name || ""
+                                  );
+                                  form.setValue(
+                                    "region",
+                                    woreda?.zone.region.name || ""
+                                  );
                                 }}
                               />
                             </FormControl>
@@ -582,7 +695,9 @@ export function TeacherSignupForm() {
                           name="region"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-slate-700 font-medium">Region</FormLabel>
+                              <FormLabel className="text-slate-700 font-medium">
+                                Region
+                              </FormLabel>
                               <FormControl>
                                 <WritableDropdown
                                   isWritable={false}
@@ -592,8 +707,8 @@ export function TeacherSignupForm() {
                                   }))}
                                   value={field.value}
                                   onValueChange={(regionName) => {
-                                    field.onChange(regionName)
-                                    form.setValue("zone", "")
+                                    field.onChange(regionName);
+                                    form.setValue("zone", "");
                                   }}
                                 />
                               </FormControl>
@@ -609,12 +724,19 @@ export function TeacherSignupForm() {
                           name="zone"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-slate-700 font-medium">Zone</FormLabel>
+                              <FormLabel className="text-slate-700 font-medium">
+                                Zone
+                              </FormLabel>
                               <FormControl>
                                 <WritableDropdown
                                   options={getAllZones()
-                                    .filter((z) => z.region.name === formState.region)
-                                    .map((z) => ({ label: z.name, value: z.name }))}
+                                    .filter(
+                                      (z) => z.region.name === formState.region
+                                    )
+                                    .map((z) => ({
+                                      label: z.name,
+                                      value: z.name,
+                                    }))}
                                   value={field.value}
                                   onValueChange={field.onChange}
                                 />
@@ -648,8 +770,12 @@ export function TeacherSignupForm() {
                           <ReactSelect
                             isMulti
                             options={languages}
-                            value={languages.filter((opt) => field.value.includes(opt.value))}
-                            onChange={(selected) => handleLanguageChange(selected)}
+                            value={languages.filter((opt) =>
+                              field.value.includes(opt.value)
+                            )}
+                            onChange={(selected) =>
+                              handleLanguageChange(selected)
+                            }
                             styles={selectStyles}
                             placeholder="Select languages..."
                             className="text-sm"
@@ -665,12 +791,16 @@ export function TeacherSignupForm() {
                     name="gradeIds"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-700 font-medium">Grades</FormLabel>
+                        <FormLabel className="text-slate-700 font-medium">
+                          Grades
+                        </FormLabel>
                         <FormControl>
                           <ReactSelect
                             isMulti
                             options={grades}
-                            value={grades.filter((opt) => field.value.includes(opt.value))}
+                            value={grades.filter((opt) =>
+                              field.value.includes(opt.value)
+                            )}
                             onChange={(selected) => handleGradeChange(selected)}
                             styles={selectStyles}
                             placeholder="Select grades..."
@@ -687,7 +817,9 @@ export function TeacherSignupForm() {
                     name="subjectIds"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-700 font-medium">Subjects</FormLabel>
+                        <FormLabel className="text-slate-700 font-medium">
+                          Subjects
+                        </FormLabel>
                         <FormControl>
                           <ReactSelect
                             isMulti
@@ -695,7 +827,9 @@ export function TeacherSignupForm() {
                             value={availableSubjectGroups
                               .flatMap((group) => group.options)
                               .filter((opt) => field.value.includes(opt.value))}
-                            onChange={(selected) => handleSubjectChange(selected)}
+                            onChange={(selected) =>
+                              handleSubjectChange(selected)
+                            }
                             styles={selectStyles}
                             placeholder={
                               selectedGradeIds.length === 0
@@ -708,7 +842,9 @@ export function TeacherSignupForm() {
                         </FormControl>
                         <FormMessage />
                         {selectedGradeIds.length === 0 && (
-                          <p className="text-sm text-slate-500 mt-1">Select grades first to see available subjects</p>
+                          <p className="text-sm text-slate-500 mt-1">
+                            Select grades first to see available subjects
+                          </p>
                         )}
                       </FormItem>
                     )}
@@ -717,7 +853,9 @@ export function TeacherSignupForm() {
 
                 {submitError && (
                   <Alert className="mb-6 border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-800">{submitError}</AlertDescription>
+                    <AlertDescription className="text-red-800">
+                      {submitError}
+                    </AlertDescription>
                   </Alert>
                 )}
 
@@ -744,6 +882,5 @@ export function TeacherSignupForm() {
         </CardContent>
       </Card>
     </div>
-  )
-
+  );
 }

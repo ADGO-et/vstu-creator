@@ -109,6 +109,7 @@ export interface Quiz {
   createdAt: string;
   isAdminVerified: boolean;
   for: "QUIZ" | "CONTEST";
+  difficulty?: "EASY" | "MEDIUM" | "HARD";
 }
 
 export interface QuizType {
@@ -179,6 +180,7 @@ export interface AddEditQuiz {
   // language: string;
   quizTitle: string;
   description: string;
+  createdBy: string;
 }
 
 export interface AddEditQuizforContest {
@@ -188,6 +190,10 @@ export interface AddEditQuizforContest {
   quizTitle: string;
   description: string;
   for: "CONTEST";
+  isCreatorVerified?: boolean;
+  isAdminVerified?: boolean;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+  createdBy: string;
 }
 
 export interface TotalQuizzesContestCount {

@@ -46,10 +46,29 @@ import TeacherReferal from "./pages/teacher-referal-page/TeacherReferal";
 import SalesProfile from "./pages/sales-profile/SalesProfile";
 import SalesReferal from "./pages/sales-referal-page/SalesReferal";
 
+// contest imports
+import AdminContestResultsAddFeedback from "./pages/admin-contest-results-add-feedback/AdminContestResultsAddFeedback";
+import AdminContestResultsEditFeedback from "./pages/admin-contest-results-edit-feedback/AdminContestResultsEditFeedback";
+import AdminContestResults from "./pages/admin-contest-results/AdminContestResults";
+import AdminContestsAdd from "./pages/admin-contests-add/AdminContestsAdd";
+import AdminContestsChooseQuiz from "./pages/admin-contests-choose-quiz/AdminContestsChooseQuiz";
+import AdminContestsChooseTopic from "./pages/admin-contests-choose-topic/AdminContestsChooseTopic";
+import AdminContestsQuiz from "./pages/admin-contests-choose-view-quiz/AdminContestsChooseViewQuiz";
+import AdminContestsContests from "./pages/admin-contests-contests/AdminContestsContests";
+import AdminContestsResults from "./pages/admin-contests-results/AdminContestsResults";
+import AdminContestsSubjects from "./pages/admin-contests-subjects/AdminContestsSubjects";
+// import AdminContestsViewQuiz from "./pages/admin-contests-view-contest/AdminContestsViewContest";
+import AdminContests from "./pages/admin-contests/AdminContests";
+import AdminAddQuestionAI from "./pages/add-quiz-with-ai/AdminAddQuestionAI";
+import AdminContestDetail from "./pages/admin-contests-detail/AdminContestDetail";
+import AdminEditcontestQuiz from "./pages/admin-contests-detail/components/AdminEditContestQuiz";
+import AdminEditContestQuestion from "./pages/admin-contests-detail/components/AdminEditContestQuestion";
+import AdminAddContestQuestion from "./pages/admin-contests-detail/components/AdminAddContestQuestion";
+
 export const router = createBrowserRouter([
   // { path: "", element: <ContentCreatorSignIn /> },
-  { path: "", element: <SignIn/> },
-  { path: "signup", element: <Signup/> },
+  { path: "", element: <SignIn /> },
+  { path: "signup", element: <Signup /> },
 
   {
     path: "cc",
@@ -86,7 +105,10 @@ export const router = createBrowserRouter([
         element: <CCEditQuestion />,
       },
 
-      { path: "unverified-quizzes/:topicId/edit/:quizId", element: <CCEditQuiz /> },
+      {
+        path: "unverified-quizzes/:topicId/edit/:quizId",
+        element: <CCEditQuiz />,
+      },
       {
         path: "unverified-quizzes/:topicId/edit/:quizId/add-question",
         element: <CCAddQuestion />,
@@ -95,7 +117,7 @@ export const router = createBrowserRouter([
         path: "unverified-quizzes/:topicId/edit/:quizId/edit-question/:questionId",
         element: <CCEditQuestion />,
       },
-// ##############################################
+      // ##############################################
       { path: "reports", element: <AdminQuestionReports /> },
       { path: "reports/:questionId", element: <DetailQuestionReport /> },
 
@@ -184,19 +206,160 @@ export const router = createBrowserRouter([
     element: <SalesLayout />,
     children: [
       { path: "", element: <Navigate replace to={"/sales/referal"} /> },
-      { path: "profile", element: <SalesProfile/> },
-      { path: "referal", element: <SalesReferal/> },
-    ]
-  },  
+      { path: "profile", element: <SalesProfile /> },
+      { path: "referal", element: <SalesReferal /> },
+    ],
+  },
 
   {
     path: "teacher",
     element: <TeacherLayout />,
-    children:[
+    children: [
       { path: "", element: <Navigate replace to={"/teacher/referal"} /> },
       { path: "profile", element: <TeacherProfile /> },
       { path: "referal", element: <TeacherReferal /> },
+      { path: "contests", element: <AdminContests /> },
+      {
+        path: "contests/contests/:gradeId",
+        element: <AdminContestsSubjects />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subject",
+        element: <AdminContestsContests />,
+      },
 
-    ]
-  }
+      // {
+      //   path: "contests/contests/:gradeId/:subject/:contestId",
+      //   element: <AdminContestsViewQuiz />,
+      // },
+      {
+        path: "contests/contests/:gradeId/:subject/:contestId",
+        element: <AdminContestDetail />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subject/:contestId/:topicId/edit/:quizId",
+        element: <AdminEditcontestQuiz />,
+      },
+
+      {
+        path: "contests/contests/:gradeId/:subject/:contestId/:topicId/edit/:quizId/add-question",
+        element: <AdminAddContestQuestion />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subject/:contestId/:topicId/edit/:quizId/add-with-ai",
+        element: <AdminAddQuestionAI />,
+      },
+
+      {
+        path: "contests/contests/:gradeId/:subject/:contestId/:topicId/edit/:quizId/edit-question/:questionId",
+        element: <AdminEditContestQuestion />,
+      },
+
+      {
+        path: "contests/contests/:gradeId/:subject/add",
+        element: <AdminContestsAdd />,
+      },
+      // this section is for adding quizzes to contests in the admin side
+      //##########################################
+
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/add",
+        element: <ContestQuizzesTopics />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/add/:topicId",
+        element: <ContestQuizzesQuizzes />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/add/:topicId/add",
+        element: <ContestAddQuiz />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/add/:topicId/edit/:quizId",
+        element: <ContestEditQuiz />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/add/:topicId/edit/:quizId/add-with-ai",
+        element: <AdminAddQuestionAI />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/add/:topicId/edit/:quizId/add-question",
+        element: <ContestAddQuestion />,
+      },
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/add/:topicId/edit/:quizId/edit-question/:questionId",
+        element: <ContestEditQuestion />,
+      },
+
+      //#######################################################
+
+      {
+        path: "contests/contests/:gradeId/:subjectId/add/choose",
+        element: <AdminContestsChooseTopic />,
+      },
+
+      {
+        path: "contests/contests/:gradeId/:subject/add/choose/:topicId/",
+        element: <AdminContestsChooseQuiz />,
+      },
+
+      {
+        path: "contests/contests/:gradeId/:subject/add/choose/:topicId/:quizId",
+        element: <AdminContestsQuiz />,
+      },
+
+      // quizzes
+      { path: "contests/quizzes/:gradeId", element: <AdminQuizzesSubjects /> },
+      {
+        path: "contests/quizzes/:gradeId/:subjectId", // I WILL START FROM THIS POINT
+        element: <AdminQuizTopics />,
+      },
+      {
+        path: "contests/quizzes/:gradeId/:subject/add",
+        element: <AdminDataAddTopic />,
+      },
+      {
+        path: "contests/quizzes/:gradeId/:subject/edit/:topicId",
+        element: <AdminDataEditTopic />,
+      },
+      {
+        path: "contests/quizzes/:gradeId/:subject/:topicId", // THIS IS MY SECOND POINT
+        element: <AdminQuizzesQuizzes />,
+      },
+      {
+        path: "contests/quizzes/:gradeId/:subject/:topicId/add", // FOR ADDING QUIZ
+        element: <AdminAddQuiz />,
+      },
+      {
+        path: "contests/quizzes/:gradeId/:subject/:topicId/edit/:quizId", // FOR EDITING QUIZ
+        element: <AdminEditQuiz />,
+      },
+
+      {
+        path: "contests/quizzes/:gradeId/:subject/:topicId/edit/:quizId/add-question", // FOR ADDING QUESTION
+        element: <AdminAddQuestion />,
+      },
+
+      {
+        path: "contests/quizzes/:gradeId/:subject/:topicId/edit/:quizId/add-with-ai", // FOR ADDING QUIZ using AI
+        element: <AdminAddQuestionAI />,
+      },
+
+      {
+        path: "contests/quizzes/:gradeId/:subject/:topicId/edit/:quizId/edit-question/:questionId", // FOR EDITING QUESTION INSIDE A QUIZ
+        element: <AdminEditQuestion />,
+      },
+      //contest results
+      { path: "contests-results", element: <AdminContestsResults /> },
+      { path: "contests-results/:contestId", element: <AdminContestResults /> },
+      {
+        path: "contests-results/:contestId/:studentId/add",
+        element: <AdminContestResultsAddFeedback />,
+      },
+      {
+        path: "contests-results/:contestId/:studentId/edit",
+        element: <AdminContestResultsEditFeedback />,
+      },
+    ],
+  },
 ]);

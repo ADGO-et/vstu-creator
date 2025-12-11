@@ -7,13 +7,18 @@ import {
 } from "@/types/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
+import { TeacherProfileInfo as Teacher } from "@/types/teacher";
 
 export const USER_KEY = "users";
 const STUDENT_PROFILE_QUERY_KEY = "studentProfile";
 const PARENT_PROFILE_QUERY_KEY = "parentProfile";
 const STUDENTS = "students";
 
-export function useContentCreatorSignin({ onSuccess }: { onSuccess: () => void }) {
+export function useContentCreatorSignin({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}) {
   return useMutation<void, AxiosError, LoginCreator>({
     mutationFn: async (info: LoginCreator) => {
       await apiClient.post("/login/creator", info);
@@ -33,7 +38,6 @@ export function useTeacherSignin({ onSuccess }: { onSuccess: () => void }) {
   });
 }
 
-
 export function useSalesSignin({ onSuccess }: { onSuccess: () => void }) {
   return useMutation<void, AxiosError, LoginTeacherAndSales>({
     mutationFn: async (info: LoginTeacherAndSales) => {
@@ -44,7 +48,6 @@ export function useSalesSignin({ onSuccess }: { onSuccess: () => void }) {
   });
 }
 
-
 export const useGetStudent = (studentId: string) => {
   return useQuery<Student, AxiosError>({
     queryKey: [STUDENTS, studentId],
@@ -54,7 +57,6 @@ export const useGetStudent = (studentId: string) => {
     },
   });
 };
-
 
 export function useGetStudentProfile(options?: { enabled?: boolean }) {
   return useQuery<Student, AxiosError>({
@@ -70,7 +72,6 @@ export function useGetStudentProfile(options?: { enabled?: boolean }) {
     ...options,
   });
 }
-
 
 export const useGetParentProfile = (options?: { enabled?: boolean }) => {
   return useQuery<Parent, AxiosError>({
@@ -97,3 +98,13 @@ export function useLogout() {
   });
 }
 
+export function useGetTeacher(options?: { enabled?: boolean }) {
+  return useQuery<Teacher, AxiosError>({
+    queryKey: ["teacherProfile", "me"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<Teacher>(`/teachers/me`);
+      return data;
+    },
+    ...options,
+  });
+}

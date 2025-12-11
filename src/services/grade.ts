@@ -90,3 +90,14 @@ export function useDeleteGrade(id: string) {
     },
   });
 }
+
+export function useGetSingleGrade(id: string | null) {
+  return useQuery<Grade, AxiosError>({
+    enabled: id !== null,
+    queryKey: [GRADES, id],
+    queryFn: async () => {
+      const res = await apiClient.get<Grade>(`/grades/${id}`);
+      return res.data;
+    },
+  });
+}
