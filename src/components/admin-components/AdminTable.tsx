@@ -107,7 +107,12 @@ export function AdminTable<TData, TValue>({
                 const isNoSort = !isSortable(header.id);
                 const isNeutral = dir === false && !isNoSort;
                 return (
-                  <TableHead key={header.id} className="text-background">
+                  <TableHead
+                    key={header.id}
+                    className={`text-background ${
+                      columns.length === 2 ? "w-1/2" : ""
+                    }`}
+                  >
                     <div className={`flex gap-1 ${columns.length === 2 ? "justify-around w-full" : "items-center"}`}>
                       <button
                         onClick={() => { header.column.toggleSorting(); }}
@@ -136,7 +141,10 @@ export function AdminTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    key={cell.id}
+                    className={columns.length === 2 ? "w-1/2" : undefined}
+                  >
                     {columns.length === 2 ? (
                       <div className="w-full flex justify-around">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

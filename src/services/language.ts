@@ -82,3 +82,16 @@ export const useDeleteLanguage = (id: string) => {
     },
   });
 };
+
+
+export const useGetLanguage = (id: string) => {
+  return useQuery<Language, AxiosError>({
+    queryKey: [LANGUAGES, id],
+    queryFn: async () => {
+      const { data } = await apiClient.get<{ language: Language }>(`/languages/${id}`);
+      return data.language;
+    },
+    enabled: !!id,
+    staleTime: 300000,
+  });
+};

@@ -12,13 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 // import { useAdminSignin, useSuperAdminSignin } from "@/services/user";
-import { useContentCreatorSignin } from "@/services/user";
+import { useContentCreatorSignin, useSalesSignin, useTeacherSignin } from "@/services/user";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import ethiotelecom from "@/assets/logos/Ethiotelecom.png";
+import { Link } from "react-router-dom";
 // import vstulogo from "@/assets/logos/image.png"
 
 import signin from "@/assets/logos/vstu.png";
@@ -46,15 +47,15 @@ export default function SignIn() {
     },
   });
 
-  const teacherSignin = useContentCreatorSignin({
+  const teacherSignin = useTeacherSignin({
     onSuccess: () => {
-      navigate("/cc");
+      navigate("/teacher");
     },
   });
 
-  const salesSignin = useContentCreatorSignin({
+  const salesSignin = useSalesSignin({
     onSuccess: () => {
-      navigate("/cc");
+      navigate("/sales");
     },
   });
 
@@ -144,7 +145,7 @@ function SignInForm({ q, role }: { q: any; role: 'creator' | 'teacher' | 'sales'
             q.mutate({ email: email.trim(), password });
           } else {
             const { phoneNumber, password } = values as z.infer<typeof formSchemaPhone>;
-            q.mutate({ phoneNumber, password });
+            q.mutate({ phoneNumber: "251" + phoneNumber, password });
           }
         })}
         className="space-y-6 w-full animate-fade-in"
@@ -247,6 +248,12 @@ function SignInForm({ q, role }: { q: any; role: 'creator' | 'teacher' | 'sales'
           )}
           {role === 'creator' ? 'Sign In as Content Creator' : role === 'teacher' ? 'Sign In as Teacher' : 'Sign In as Sales'}
         </Button>
+
+        <div className="w-full flex justify-center items-center">
+            <Link to="/signup">
+            <span className="text-md hover:underline text-center text-blue-950">Signup</span>
+            </Link>
+        </div>
       </form>
     </Form>
   );

@@ -1,37 +1,62 @@
-import { useEffect, useRef } from "react";
-// import { useTranslation } from "react-i18next";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import AddSidebar from "../navigation/AddSidebar";
-// import Footer from "../navigation/Footer";
-// import AdminNav from "./AdminNav";
-import CCNav from "./ccNav";
 import { CClinks } from "./constants/cc-link";
-// import { adminLinks } from "./constants/admin-links";
+import CCNav from "./ccNav";
+
 
 export default function ContentCreatorLayout() {
-  // const { i18n } = useTranslation();
   const location = useLocation();
+  const navRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [navHeight, setNavHeight] = useState(0);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // useEffect(() => {
-  //   i18n.changeLanguage("en");
-  // }, [i18n]);
+  useLayoutEffect(() => {
+    const calc = () => {
+      if (navRef.current) setNavHeight(navRef.current.offsetHeight);
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo(0, 0);
+    if (scrollRef.current) scrollRef.current.scrollTo(0, 0);
   }, [location.pathname]);
 
   return (
-    <div className="h-screen flex flex-col">
-      <CCNav />
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
-        <div className="min-h-screen">
-          <AddSidebar links={CClinks}>
-            <main className="pt-6 min-h-screen">
-              <Outlet />
-            </main>
-          </AddSidebar>
-          {/* <Footer /> */}
+    <div
+      className="h-screen w-full"
+      style={{ ["--nav-height" as any]: `${navHeight}px` }}
+    >
+      {/* Fixed sidebar (full height) */}
+      <AddSidebar
+        links={CClinks}
+        collapsed={sidebarCollapsed}
+        onCollapsedChange={setSidebarCollapsed}
+      />
+
+      {/* Fixed navbar (offset by sidebar width) */}
+      <div
+        ref={navRef}
+        className="fixed top-0 right-0 z-40 bg-white border-b left-[var(--sidebar-width)]"
+      >
+        <CCNav showLogo={sidebarCollapsed} />
+      </div>
+
+      {/* Scrollable main area below navbar */}
+      <div
+        className="absolute right-0 left-[var(--sidebar-width)]"
+        style={{
+          top: "var(--nav-height)",
+          height: "calc(100vh - var(--nav-height))",
+        }}
+      >
+        <div ref={scrollRef} className="h-full overflow-y-auto px-0">
+          <main className="pt-6 container mt-6">
+            <Outlet />
+          </main>
         </div>
       </div>
     </div>

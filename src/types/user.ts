@@ -21,6 +21,12 @@ export interface LoginCreator {
   password: string;
 }
 
+
+export interface LoginTeacherAndSales {
+  phoneNumber?: string;
+  password: string;
+}
+
 export interface Parent {
   _id: string;
   firstName: string;

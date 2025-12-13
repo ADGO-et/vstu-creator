@@ -59,6 +59,7 @@ export default function QuizInfoForm({ isEdit }: { isEdit: boolean }) {
         description,
         topic: topicId,
         questions: getQ.data.questions.map((q) => q._id),
+        createdBy: "Teacher",
       };
       editQ.mutate({ id: quizId || "-", quiz });
     } else {
@@ -68,6 +69,7 @@ export default function QuizInfoForm({ isEdit }: { isEdit: boolean }) {
         description,
         topic: topicId,
         questions: [],
+        createdBy: "Teacher",
       };
       addQ.mutate(quiz, {
         onSuccess: (id) => {

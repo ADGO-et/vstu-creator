@@ -57,6 +57,10 @@ module.exports = {
     				DEFAULT: 'hsl(var(--card))',
     				foreground: 'hsl(var(--card-foreground))'
     			},
+				tertiary: {
+					DEFAULT: 'hsl(var(--tertiary))',
+					foreground: 'hsl(var(--tertiary-foreground))'
+				},
     			customGreen: 'rgba(88,204,2,0.35)',
     			link: '#0D0DDE',
     			grey: 'rgba(217,217,217,1)',

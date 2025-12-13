@@ -94,7 +94,6 @@ export function useGetLatestContests(page?: number, limit?: number) {
   });
 }
 
-
 // Updated useGetContests with a unique query key
 export function useGetContests(page?: number, limit?: number) {
   return useQuery<Main, AxiosError>({
@@ -138,6 +137,27 @@ export function useGetContest(contestId: string) {
     queryKey: [CONTESTS, contestId],
     queryFn: async () => {
       const res = await apiClient.get<ContestType>(`/contests/${contestId}`);
+      return res.data;
+    },
+  });
+}
+
+export function useGetTeacherContests(
+  teacherId: string,
+  page?: number,
+  limit?: number
+) {
+  return useQuery<Main, AxiosError>({
+    queryKey: [CONTESTS, "by-teacher", { teacherId, page, limit }],
+    enabled: !!teacherId,
+    queryFn: async () => {
+      const res = await apiClient.get<Main>(`/contests`, {
+        params: {
+          teacher_id: teacherId,
+          ...(page !== undefined && { page }),
+          ...(limit !== undefined && { limit }),
+        },
+      });
       return res.data;
     },
   });

@@ -1,8 +1,6 @@
-// import logo from "@/assets/logos/teletemari.jpg";
-import logo from "@/assets/logos/vstu.png";
+import logo from "@/assets/logos/image.png";
 import { Link } from "react-router-dom";
 import Avatar from "../navigation/Avatar";
-// import Notifications from "../navigation/Notifications";
 import { Button } from "../ui/button";
 import {
   Sheet,
@@ -13,27 +11,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import ethiotelecom from '@/assets/logos/Ethiotelecom.png';
 import { CClinks } from "./constants/cc-link";
 
-
-export default function CCNav() {
-  // const isLoading = false;
-  // const error = null;
-  // const notifications = null;
+export default function CCNav({ showLogo = false }: { showLogo?: boolean }) {
   return (
     <div className="container">
       {/* desktop */}
-      <nav className="hidden md:flex gap-9 items-center py-3">
-        <div className="flex-1">
-          <Link to="/cc/">
-            <img src={logo} alt="teletemari logo" className="max-h-[4.25rem]" />
+      <nav className="hidden md:flex items-center">
+        {
+          showLogo && (
+            <Link to="/cc" className="mr-4">
+            <img src={ethiotelecom} alt="teletemari logo" className="max-h-[4.5rem]" />
           </Link>
-        </div>
+          )
+        }
         <div className="flex-1 flex justify-end gap-3 items-center">
-          {/* <Notifications isLoading={isLoading} error={error}>
-            {notifications}
-          </Notifications> */}
           <Avatar role="creator" />
+          <Link to="/cc" className="mr-4">
+            <img src={logo} alt="teletemari logo" className="max-h-[4.5rem]" />
+          </Link>
+          {/* logo removed here when expanded per requirement */}
         </div>
       </nav>
 
