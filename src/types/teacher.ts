@@ -60,6 +60,7 @@ export interface TeacherProfileInfo {
   teacher_id: string;
   createdAt: string;
   updatedAt: string;
+  quizzes: number;
 }
 
 export interface ReferredStudent {

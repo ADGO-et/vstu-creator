@@ -476,10 +476,24 @@ export function TeacherSignupForm() {
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="+1 (555) 123-4567"
+                              placeholder="+2519xxxxxxxx"
                               type="tel"
                               className="h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                               {...field}
+                              value={field.value || "+251"}
+                              onChange={(e) => {
+                                let v = e.target.value.replace(/\s+/g, "");
+                                if (!v.startsWith("+251"))
+                                  v = "+251" + v.replace(/^\+?/, "");
+                                const rest = v.slice(4).replace(/[^\d]/g, "");
+                                const normalized =
+                                  rest.length === 0
+                                    ? "9"
+                                    : rest[0] !== "9"
+                                    ? "9" + rest.slice(1)
+                                    : rest;
+                                field.onChange("+251" + normalized);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />

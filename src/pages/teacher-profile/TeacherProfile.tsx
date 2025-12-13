@@ -433,10 +433,18 @@ const TeacherProfile = () => {
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-sm font-medium text-gray-600">
-                      Contests
+                      Contests Created
                     </span>
                     <span className="text-sm text-gray-900 capitalize">
                       {t.contests || 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-sm font-medium text-gray-600">
+                      Quizzes Created(for contests)
+                    </span>
+                    <span className="text-sm text-gray-900 capitalize">
+                      {t.quizzes || 0}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-2">
