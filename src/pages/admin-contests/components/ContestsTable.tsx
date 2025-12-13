@@ -1,4 +1,7 @@
 import { AdminTable } from "@/components/admin-components/AdminTable";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { useGetGrades } from "@/services/grade";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
@@ -11,18 +14,26 @@ interface Grade {
 }
 
 const h = createColumnHelper<Grade>();
-const contestCols: ColumnDef<Grade, any>[] = [
-  h.accessor("gradeName", { header: "Name" }),
-  h.accessor("numContests", {
-    header: "Total Contests",
-    cell: (p) => `${p.getValue()}`,
+const contestCols: ColumnDef<Grade, string>[] = [
+  h.accessor((row) => row.gradeName, {
+    id: "gradeName",
+    header: "Name",
   }),
-  h.display({
+  {
+    id: "action",
     header: "Action",
     cell: (p) => (
-      <Link to={`contests/${p.row.original.id}`}>View Contests</Link>
+      <Link
+        className={cn(
+          buttonVariants({ variant: "link" }),
+          "h-auto p-0 text-tertiary"
+        )}
+        to={`contests/${p.row.original.id}`}
+      >
+        View contests
+      </Link>
     ),
-  }),
+  },
 ];
 
 export default function ContestsTable() {
@@ -38,17 +49,23 @@ export default function ContestsTable() {
     .sort((a, b) => a.grade - b.grade);
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-4xl">Contests</h1>
-      <p>Choose a grade</p>
-      <AdminTable
-        data={data || null}
-        columns={contestCols}
-        isLoading={gradesQ.isLoading}
-        error={gradesQ.error}
-        retry={gradesQ.refetch}
-        enablePagination={true}
-      />
-    </div>
+    <Card>
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-xl">Choose a grade</CardTitle>
+        <CardDescription>
+          Select a grade to view contests and details.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <AdminTable
+          data={data || null}
+          columns={contestCols}
+          isLoading={gradesQ.isLoading}
+          error={gradesQ.error}
+          retry={gradesQ.refetch}
+          enablePagination={true}
+        />
+      </CardContent>
+    </Card>
   );
 }

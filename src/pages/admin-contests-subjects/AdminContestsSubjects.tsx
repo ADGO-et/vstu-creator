@@ -15,7 +15,7 @@ const h = createColumnHelper<Subject>();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cols: ColumnDef<Subject, any>[] = [
   h.accessor("subject", { header: "Subject" }),
-  h.accessor("numContests", { header: "Total Contests" }),
+  // h.accessor("numContests", { header: "Total Contests" }),
   h.display({
     header: "Action",
     cell: (p) => <Link to={p.row.original.id}>View Contests</Link>,
