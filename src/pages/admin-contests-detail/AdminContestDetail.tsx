@@ -1,13 +1,13 @@
-import Back from '@/components/admin-components/Back';
-import { useGetContest } from '@/services/contest';
-import { useParams } from 'react-router-dom';
-import { useGetQuizzesContest } from '@/services/quiz';
+import Back from "@/components/admin-components/Back";
+import { useGetContest } from "@/services/contest";
+import { useParams } from "react-router-dom";
+import { useGetQuizzesContest } from "@/services/quiz";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { AdminTable } from "@/components/admin-components/AdminTable";
 import EditLink from "@/components/admin-components/EditLink";
 import { Delete } from "./components/Delete";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ContestParticipants from './components/ContestParticipants';
+import ContestParticipants from "./components/ContestParticipants";
 
 interface Quiz {
   id: string;
@@ -60,21 +60,25 @@ const AdminContestDetail = () => {
 
   const truncate = (str: string, n: number) => {
     return str.length > n ? str.slice(0, n - 1) + "..." : str;
-  }
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-4">
       <Back />
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-primary">{truncate(title || "", 60)}</CardTitle>
+          <CardTitle className="text-3xl font-bold text-primary">
+            {truncate(title || "", 60)}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p className="text-lg font-semibold">
-            <span className="text-gray-500">Description:</span> {truncate(description || "", 100)}
+            <span className="text-gray-500">Description:</span>{" "}
+            {truncate(description || "", 100)}
           </p>
           <p className="text-lg font-semibold">
-            <span className="text-gray-500">Total Enrollments:</span> {enrollments}
+            <span className="text-gray-500">Total Enrollments:</span>{" "}
+            {enrollments}
           </p>
         </CardContent>
       </Card>
@@ -86,8 +90,8 @@ const AdminContestDetail = () => {
         retry={quizzesQ.refetch}
         enablePagination={false}
       />
-      <h1 className='text-primary text-xl'>Participants</h1>
-      <ContestParticipants contestId={contestId || ""}/>
+      <h1 className="text-primary text-xl">Participants</h1>
+      <ContestParticipants contestId={contestId || ""} />
     </div>
   );
 };

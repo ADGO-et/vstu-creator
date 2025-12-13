@@ -64,6 +64,8 @@ import AdminContestDetail from "./pages/admin-contests-detail/AdminContestDetail
 import AdminEditcontestQuiz from "./pages/admin-contests-detail/components/AdminEditContestQuiz";
 import AdminEditContestQuestion from "./pages/admin-contests-detail/components/AdminEditContestQuestion";
 import AdminAddContestQuestion from "./pages/admin-contests-detail/components/AdminAddContestQuestion";
+import TeacherContests from "./pages/teacher-contests/TeacherContests";
+import TeacherContestDetail from "./pages/teacher-contests/TeacherContestDetail";
 
 export const router = createBrowserRouter([
   // { path: "", element: <ContentCreatorSignIn /> },
@@ -227,7 +229,8 @@ export const router = createBrowserRouter([
         path: "contests/contests/:gradeId/:subject",
         element: <AdminContestsContests />,
       },
-
+      { path: "my-contests", element: <TeacherContests /> },
+      { path: "my-contests/:contestId", element: <TeacherContestDetail /> },
       // {
       //   path: "contests/contests/:gradeId/:subject/:contestId",
       //   element: <AdminContestsViewQuiz />,

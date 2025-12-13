@@ -1,17 +1,33 @@
-import { useGetTeacherProfile } from "@/services/teacher"
-import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, Globe, GraduationCap, Clock } from "lucide-react"
-import { useState } from "react"
+import { useGetTeacherProfile } from "@/services/teacher";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Award,
+  BookOpen,
+  Globe,
+  GraduationCap,
+  Clock,
+} from "lucide-react";
+import { useState } from "react";
 
-const formatFullName = (t: any) => [t?.firstName, t?.lastName].filter(Boolean).join(" ") || "Unnamed"
+const formatFullName = (t: any) =>
+  [t?.firstName, t?.lastName].filter(Boolean).join(" ") || "Unnamed";
 
 const formatDate = (d?: string) => {
-  if (!d) return "—"
+  if (!d) return "—";
   try {
-    return new Date(d).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+    return new Date(d).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   } catch {
-    return d
+    return d;
   }
-}
+};
 
 const Skeleton = () => (
   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -43,34 +59,39 @@ const Skeleton = () => (
       </div>
     </div>
   </div>
-)
+);
 
 const TeacherProfile = () => {
-  const { data: teacherProfile, isLoading, error } = useGetTeacherProfile()
-  const [copied, setCopied] = useState(false)
+  const { data: teacherProfile, isLoading, error } = useGetTeacherProfile();
+  const [copied, setCopied] = useState(false);
 
-  if (process.env.NODE_ENV === "development") console.debug("teacher profile", teacherProfile)
+  if (process.env.NODE_ENV === "development")
+    console.debug("teacher profile", teacherProfile);
 
   if (error) {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
-          <div className="text-red-600 font-medium">Error loading teacher profile</div>
-          <div className="text-red-500 text-sm mt-1">Please try refreshing the page</div>
+          <div className="text-red-600 font-medium">
+            Error loading teacher profile
+          </div>
+          <div className="text-red-500 text-sm mt-1">
+            Please try refreshing the page
+          </div>
         </div>
       </div>
-    )
+    );
   }
 
-  const t = teacherProfile
+  const t = teacherProfile;
 
   const copyReferral = (code?: string) => {
-    if (!code) return
+    if (!code) return;
     navigator.clipboard?.writeText(code).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1800)
-    })
-  }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
+  };
 
   return (
     <div className="min-h-screen">
@@ -105,7 +126,9 @@ const TeacherProfile = () => {
                   <div className="flex-1 pt-4">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                       <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">{formatFullName(t)}</h1>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                          {formatFullName(t)}
+                        </h1>
                         <div className="flex flex-wrap items-center gap-3">
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                             <User className="w-4 h-4 mr-1" />
@@ -149,12 +172,16 @@ const TeacherProfile = () => {
                     <GraduationCap className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{t.teachingExperience ?? 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {t.teachingExperience ?? 0}
+                    </p>
                     <p className="text-sm text-gray-500">Years Experience</p>
                   </div>
                 </div>
                 <p className="text-xs text-gray-400">
-                  {(t.teachingExperience ?? 0) > 5 ? "Senior Educator" : "Growing Professional"}
+                  {(t.teachingExperience ?? 0) > 5
+                    ? "Senior Educator"
+                    : "Growing Professional"}
                 </p>
               </div>
 
@@ -164,7 +191,9 @@ const TeacherProfile = () => {
                     <BookOpen className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{t.subject?.length || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {t.subject?.length || 0}
+                    </p>
                     <p className="text-sm text-gray-500">Subjects</p>
                   </div>
                 </div>
@@ -177,7 +206,9 @@ const TeacherProfile = () => {
                     <Globe className="w-5 h-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{t.languagesSpoken?.length || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {t.languagesSpoken?.length || 0}
+                    </p>
                     <p className="text-sm text-gray-500">Languages</p>
                   </div>
                 </div>
@@ -190,7 +221,9 @@ const TeacherProfile = () => {
                     <Award className="w-5 h-5 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{t.grades?.length || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {t.grades?.length || 0}
+                    </p>
                     <p className="text-sm text-gray-500">Grade Levels</p>
                   </div>
                 </div>
@@ -204,7 +237,9 @@ const TeacherProfile = () => {
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
                   <BookOpen className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Subjects</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Subjects
+                  </h3>
                 </div>
                 <div className="space-y-3">
                   {t.subject?.length ? (
@@ -231,7 +266,9 @@ const TeacherProfile = () => {
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
                   <Globe className="w-5 h-5 text-green-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Languages</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Languages
+                  </h3>
                 </div>
                 <div className="space-y-3">
                   {t.languagesSpoken?.length ? (
@@ -260,7 +297,9 @@ const TeacherProfile = () => {
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
                   <GraduationCap className="w-5 h-5 text-purple-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Grade Assignments</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Grade Assignments
+                  </h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {t.grades.map((g: any) => (
@@ -269,12 +308,16 @@ const TeacherProfile = () => {
                       className="border border-gray-200 rounded-xl p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-900">Grade {g.grade}</span>
+                        <span className="font-semibold text-gray-900">
+                          Grade {g.grade}
+                        </span>
                         <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                           {g.subjects?.length || 0} subjects
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600">Active teaching assignment</p>
+                      <p className="text-sm text-gray-600">
+                        Active teaching assignment
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -287,20 +330,34 @@ const TeacherProfile = () => {
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm bg-gradient-to-r from-primary/10 to-primary/30">
                 <div className="flex items-center gap-2 mb-6">
                   <MapPin className="w-5 h-5 text-red-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Location</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Location
+                  </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
-                    <span className="text-sm font-medium text-gray-600">Region</span>
-                    <span className="text-sm text-gray-900">{t.address?.region || "—"}</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Region
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {t.address?.region || "—"}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
-                    <span className="text-sm font-medium text-gray-600">Zone</span>
-                    <span className="text-sm text-gray-900">{t.address?.zone || "—"}</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Zone
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {t.address?.zone || "—"}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-sm font-medium text-gray-600">Woreda</span>
-                    <span className="text-sm text-gray-900">{t.address?.woreda || "—"}</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Woreda
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {t.address?.woreda || "—"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -309,12 +366,16 @@ const TeacherProfile = () => {
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm bg-gradient-to-r from-blue-50 to-blue-200">
                 <div className="flex items-center gap-2 mb-6">
                   <User className="w-5 h-5 text-gray-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Profile Details</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Profile Details
+                  </h3>
                 </div>
                 <div className="space-y-3">
                   {/* Referral Code (teacher_id) with copy */}
                   <div className="py-2 border-b border-gray-100">
-                    <span className="block text-xs font-medium text-gray-500 tracking-wide mb-1">REFERRAL CODE</span>
+                    <span className="block text-xs font-medium text-gray-500 tracking-wide mb-1">
+                      REFERRAL CODE
+                    </span>
                     <div className="flex items-center gap-3">
                       <span className="text-lg font-semibold text-gray-900 font-mono">
                         {t.teacher_id || "—"}
@@ -336,28 +397,55 @@ const TeacherProfile = () => {
                   </div>
                   {/* Verified status */}
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-sm font-medium text-gray-600">Verified</span>
-                    <span className={`text-sm font-medium ${t.isVerified ? "text-green-600" : "text-amber-600"}`}>
+                    <span className="text-sm font-medium text-gray-600">
+                      Verified
+                    </span>
+                    <span
+                      className={`text-sm font-medium ${
+                        t.isVerified ? "text-green-600" : "text-amber-600"
+                      }`}
+                    >
                       {t.isVerified ? "Yes" : "Pending"}
                     </span>
                   </div>
                   {/* Explanatory note */}
                   <p className="pt-1 text-xs text-gray-600 leading-relaxed">
-                    If your account is not verified, your referral code will be inactive. To verify your account,
-                    please contact VSTU Customer Support or an administrator.
+                    If your account is not verified, your referral code will be
+                    inactive. To verify your account, please contact VSTU
+                    Customer Support or an administrator.
                   </p>
                   {/* Remaining metadata */}
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-sm font-medium text-gray-600">Age</span>
-                    <span className="text-sm text-gray-900">{t.age ?? "—"}</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Age
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {t.age ?? "—"}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-sm font-medium text-gray-600">Gender</span>
-                    <span className="text-sm text-gray-900 capitalize">{t.gender || "—"}</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Gender
+                    </span>
+                    <span className="text-sm text-gray-900 capitalize">
+                      {t.gender || "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-sm font-medium text-gray-600">
+                      Contests
+                    </span>
+                    <span className="text-sm text-gray-900 capitalize">
+                      {t.contests || 0}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-sm font-medium text-gray-600">Last Updated</span>
-                    <span className="text-sm text-gray-900">{formatDate(t.updatedAt)}</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Last Updated
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {formatDate(t.updatedAt)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -368,13 +456,17 @@ const TeacherProfile = () => {
         {!isLoading && !t && (
           <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
             <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Profile Data</h3>
-            <p className="text-gray-500">No teacher profile information is available at this time.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No Profile Data
+            </h3>
+            <p className="text-gray-500">
+              No teacher profile information is available at this time.
+            </p>
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TeacherProfile
+export default TeacherProfile;

@@ -30,6 +30,13 @@ export default function AdminContestsAdd() {
   const createQ = useCreateContest();
   const teacherQ = useGetTeacher();
 
+  const getErrMsg = (err: unknown) =>
+    (err as any)?.response?.data?.message || (err as any)?.message || "";
+  const createErrMsg = getErrMsg(createQ.error);
+  const showVerifyNotice = createErrMsg
+    ?.toLowerCase()
+    .includes("your account should be verified");
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const startDateTime = new Date(`${date}T${startTime}`).toISOString();
@@ -64,7 +71,7 @@ export default function AdminContestsAdd() {
   //     : undefined;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pt-6">
       <Back />
       <form
         onSubmit={handleSubmit}
@@ -89,10 +96,10 @@ export default function AdminContestsAdd() {
               "No quiz selected, please select before proceeding"}
           </p>
           <Link to={"choose"}>
-            <Button variant={"outline"}>Choose From Quiz</Button>
+            <Button variant={"outline"}>Choose From VSTU Quiz Pool</Button>
           </Link>
           <Link to={"add"}>
-            <Button variant={"outline"}>Insert Quiz Now</Button>
+            <Button variant={"outline"}>Insert Your Own Quiz</Button>
           </Link>
         </div>
         <Label className="flex flex-col gap-3">
@@ -154,16 +161,36 @@ export default function AdminContestsAdd() {
             />
           </Label>
         </div>
-        <Label className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
-            className="w-4 h-4"
-          />
-          <span>Make this contest private</span>
+        <Label className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={isPrivate}
+              onChange={(e) => setIsPrivate(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <span>Make this contest private</span>
+          </div>
+          <p className="text-sm text-gray-500 md:pl-7">
+            Private contests are only available for students in your school
+            only.
+          </p>
         </Label>
-        <ErrorMessage error={createQ.error} />
+        {showVerifyNotice ? (
+          <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-amber-800 space-y-1">
+            <p className="font-semibold">⚠️ Account Verification Required</p>
+            <p>
+              Your account must be verified before you can create a contest for
+              the first time. Please try again later.
+            </p>
+            <p>
+              Once your account is verified, you'll be able to create as many
+              contests as you want.
+            </p>
+          </div>
+        ) : (
+          <ErrorMessage error={createQ.error} />
+        )}
       </form>
     </div>
   );
