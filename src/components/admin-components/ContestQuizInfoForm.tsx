@@ -60,6 +60,7 @@ export default function ContestQuizInfoForm({ isEdit }: { isEdit: boolean }) {
         questions: getQ.data.questions.map((q) => q._id),
         for: "CONTEST",
         difficulty,
+        createdBy: "Teacher",
       };
 
       editQ.mutate({ id: quizId || "-", quiz });

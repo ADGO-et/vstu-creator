@@ -48,6 +48,22 @@ export function useSalesSignin({ onSuccess }: { onSuccess: () => void }) {
   });
 }
 
+export function useLoginByPhoneUser({
+  onSuccess,
+  onError,
+}: {
+  onSuccess: () => void;
+  onError: (error: any) => void;
+}) {
+  return useMutation<AxiosResponse, AxiosError, { phoneNumber: string }>({
+    mutationFn: async (data) => {
+      return apiClient.post("/login/phone-only", data);
+    },
+    retry: 1,
+    onSuccess,
+    onError,
+  });
+}
 export const useGetStudent = (studentId: string) => {
   return useQuery<Student, AxiosError>({
     queryKey: [STUDENTS, studentId],
