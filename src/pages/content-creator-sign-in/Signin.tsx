@@ -12,11 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 // import { useAdminSignin, useSuperAdminSignin } from "@/services/user";
-import {
-  useContentCreatorSignin,
-  useSalesSignin,
-  useLoginByPhoneUser,
-} from "@/services/user";
+import { useContentCreatorSignin, useSalesSignin, useTeacherSignin } from "@/services/user";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -47,6 +43,7 @@ const formSchemaTeacherPhone = z.object({
   phoneNumber: z
     .string()
     .min(9, { message: "Phone number must be at least 9 digits." }),
+  password: z.string(),
 });
 
 export default function SignIn() {
@@ -59,12 +56,9 @@ export default function SignIn() {
     },
   });
 
-  const teacherSignin = useLoginByPhoneUser({
+  const teacherSignin = useTeacherSignin({
     onSuccess: () => {
       navigate("/teacher");
-    },
-    onError: (error) => {
-      console.error("Teacher login error:", error);
     },
   });
 
@@ -180,7 +174,7 @@ function SignInForm({
       role === "creator"
         ? { email: "", password: "" }
         : role === "teacher"
-          ? { phoneNumber: "" }
+          ? { phoneNumber: "", password: "" }
           : { phoneNumber: "", password: "" },
   });
 
@@ -192,15 +186,15 @@ function SignInForm({
             const { email, password } = values as z.infer<typeof formSchema>;
             q.mutate({ email: email.trim(), password });
           } else if (role === "teacher") {
-            const { phoneNumber } = values as z.infer<
+            const { phoneNumber, password } = values as z.infer<
               typeof formSchemaTeacherPhone
             >;
-            q.mutate({ phoneNumber: "251" + phoneNumber });
+            q.mutate({ phoneNumber: "+251" + phoneNumber, password });
           } else {
             const { phoneNumber, password } = values as z.infer<
               typeof formSchemaPhone
             >;
-            q.mutate({ phoneNumber: "251" + phoneNumber, password });
+            q.mutate({ phoneNumber: "+251" + phoneNumber, password });
           }
         })}
         className="space-y-6 w-full animate-fade-in"
@@ -278,7 +272,7 @@ function SignInForm({
                 </FormItem>
               )}
             />
-            {role === "sales" && (
+            {(role === "sales" || role === "teacher") && (
               <FormField
                 control={form.control}
                 name="password"

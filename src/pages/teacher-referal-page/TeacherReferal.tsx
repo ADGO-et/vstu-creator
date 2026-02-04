@@ -1,5 +1,6 @@
-import {useState, useMemo} from 'react';
+import {useState, useMemo, useEffect} from 'react';
 import {useGetTeacherReferals} from '@/services/teacher';
+import { useWhoami } from '@/services/user';
 import {
   Table,
   TableHeader,
@@ -17,6 +18,13 @@ const TeacherReferal = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
   const { data, isLoading, isError, error, isFetching } = useGetTeacherReferals(page, limit);
+  const { data: whoamiData } = useWhoami();
+
+  useEffect(() => {
+    if (whoamiData) {
+      console.log(whoamiData);
+    }
+  }, [whoamiData]);
 
   const referralCode = useMemo(()=> data?.referrals?.[0]?.referralCode ?? '—', [data]);
 

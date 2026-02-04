@@ -124,3 +124,13 @@ export function useGetTeacher(options?: { enabled?: boolean }) {
     ...options,
   });
 }
+
+export function useWhoami() {
+  return useQuery<any, AxiosError>({
+    queryKey: ["whoami"],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/whoami");
+      return data;
+    },
+  });
+}
