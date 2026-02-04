@@ -1,4 +1,4 @@
-import { useGetTeacherProfile } from "@/services/teacher";
+import { useGetTeacherProfile, useGetTutorMe } from "@/services/teacher";
 import {
   User,
   Mail,
@@ -12,6 +12,7 @@ import {
   Clock,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const formatFullName = (t: any) =>
   [t?.firstName, t?.lastName].filter(Boolean).join(" ") || "Unnamed";
@@ -64,9 +65,10 @@ const Skeleton = () => (
 const TeacherProfile = () => {
   const { data: teacherProfile, isLoading, error } = useGetTeacherProfile();
   const [copied, setCopied] = useState(false);
-
-  if (process.env.NODE_ENV === "development")
-    console.debug("teacher profile", teacherProfile);
+  const { data: tutor } = useGetTutorMe();
+  console.log("tutor me data:", tutor);
+  const navigate = useNavigate();
+  const hasTutorAccount = !!(tutor as any)?.success || !!(tutor as any)?._id;
 
   if (error) {
     return (
@@ -163,7 +165,36 @@ const TeacherProfile = () => {
                 </div>
               </div>
             </div>
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Tutoring Hub
+              </h3>
+              <p className="text-sm text-gray-500 mb-4">
+                {hasTutorAccount
+                  ? "You already have a tutor account."
+                  : "Register to start tutoring on the hub."}
+              </p>
 
+              {hasTutorAccount ? (
+                <button
+                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground"
+                  onClick={() => {
+                    window.location.href = "http://localhost:5174/";
+                  }}
+                >
+                  Go to Tutoring Hub
+                </button>
+              ) : (
+                <button
+                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground"
+                  onClick={() => {
+                    navigate("/teacher/tutor-register");
+                  }}
+                >
+                  Register as Tutor
+                </button>
+              )}
+            </div>
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">

@@ -94,3 +94,69 @@ export interface TeacherReferralsResponse {
   currentPage: number;
   totalPages: number;
 }
+
+//tutor
+
+export type DayOfWeek =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+
+export interface AvailabilitySlot {
+  startTime: string; // "HH:mm"
+  endTime: string; // "HH:mm"
+  booked?: boolean; // defaults false
+}
+
+export interface Availability {
+  day: DayOfWeek;
+  isAvailable: boolean;
+  slots: AvailabilitySlot[];
+}
+
+export interface TutorRegisterPayload {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bio: string;
+  educationLevel: string;
+  institution: string;
+  subjects: string[];
+  experience: number; // years
+  hourlyRate: number;
+  availability: Availability[];
+  documents: string[]; // URLs
+  id: string;
+}
+
+export interface Tutor {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bio: string;
+  educationLevel: string;
+  institution: string;
+  subjects: string[];
+  experience: number;
+  hourlyRate: number;
+  availability: Availability[];
+  documents: string[];
+  id: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface TutorSubjectRef {
+  _id: string;
+  name: string;
+}
+
+export interface TutorWithSubjects extends Omit<Tutor, "subjects"> {
+  subjects: TutorSubjectRef[];
+  status?: "pending" | "approved" | "rejected";
+}

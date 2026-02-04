@@ -124,3 +124,24 @@ export function useGetTeacher(options?: { enabled?: boolean }) {
     ...options,
   });
 }
+
+export function useLoginByPhoneTeacher({
+  onSuccess,
+  onError,
+}: {
+  onSuccess: () => void;
+  onError: (error: any) => void;
+}) {
+  return useMutation<
+    AxiosResponse,
+    AxiosError,
+    { phoneNumber: string; password: string }
+  >({
+    mutationFn: async (data) => {
+      return apiClient.post("/login/teacher", data);
+    },
+    retry: 1,
+    onSuccess,
+    onError,
+  });
+}
