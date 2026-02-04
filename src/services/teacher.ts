@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/axios";
 import {
+  CheckTutorRegistrationResponse,
   TeacherPayload,
   TeacherProfileInfo,
   TeacherReferralsResponse,
@@ -63,6 +64,18 @@ export function useGetTutorMe() {
     queryKey: ["tutors", "me"],
     queryFn: async () => {
       const res = await apiClient.get<TutorWithSubjects>("/tutors/me");
+      return res.data;
+    },
+  });
+}
+
+export function useGetCheckTutorRegistration() {
+  return useQuery<CheckTutorRegistrationResponse, AxiosError>({
+    queryKey: ["checkTutorRegistration"],
+    queryFn: async () => {
+      const res = await apiClient.get<CheckTutorRegistrationResponse>(
+        "/tutors/checkTutorRegistration",
+      );
       return res.data;
     },
   });

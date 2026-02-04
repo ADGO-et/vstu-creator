@@ -118,6 +118,11 @@ export interface Availability {
   slots: AvailabilitySlot[];
 }
 
+export interface TutorSubject {
+  _id: string;
+  name: string;
+}
+
 export interface TutorRegisterPayload {
   firstName: string;
   lastName: string;
@@ -150,6 +155,25 @@ export interface Tutor {
   createdAt?: string;
   updatedAt?: string;
 }
+export interface TutorProfile {
+  _id: string;
+  teacher: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bio?: string;
+  educationLevel?: string;
+  institution?: string;
+  subjects: TutorSubject[];
+  experience?: number;
+  hourlyRate?: number;
+  availability: any[];
+  documents?: string[];
+  id?: string;
+  status?: "pending" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface TutorSubjectRef {
   _id: string;
@@ -159,4 +183,10 @@ export interface TutorSubjectRef {
 export interface TutorWithSubjects extends Omit<Tutor, "subjects"> {
   subjects: TutorSubjectRef[];
   status?: "pending" | "approved" | "rejected";
+}
+
+export interface CheckTutorRegistrationResponse {
+  isRegistered: boolean;
+  message: string;
+  tutor: TutorProfile | null;
 }
