@@ -6,6 +6,7 @@ import {
   TeacherReferralsResponse,
   Tutor,
   TutorRegisterPayload,
+  TutorRegisterResponse,
   TutorWithSubjects,
 } from "@/types/teacher";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -15,7 +16,7 @@ export function useCreateTeacherAccount() {
   const client = useQueryClient();
   return useMutation<void, AxiosError, TeacherPayload>({
     mutationFn: async (teacher) => {
-      await apiClient.post("/register/teacher", teacher);
+      await apiClient.post("/register/teacher", teacher, { timeout: 20000 });
     },
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ["teacher"] });
@@ -51,7 +52,11 @@ export const useGetTeacherReferals = (page: number, limit: number) => {
 
 //tutor
 export function useRegisterTutor() {
-  return useMutation<Tutor | void, AxiosError, TutorRegisterPayload>({
+  return useMutation<
+    TutorRegisterResponse | void,
+    AxiosError,
+    TutorRegisterPayload
+  >({
     mutationFn: async (payload) => {
       const res = await apiClient.post("/register/tutor", payload);
       return res.data;
@@ -75,6 +80,24 @@ export function useGetCheckTutorRegistration() {
     queryFn: async () => {
       const res = await apiClient.get<CheckTutorRegistrationResponse>(
         "/tutors/checkTutorRegistration",
+      );
+      return res.data;
+    },
+  });
+}
+
+export function useUploadTutorDocument() {
+  return useMutation<any, AxiosError, File>({
+    mutationFn: async (file) => {
+      const formData = new FormData();
+      formData.append("documents", file);
+
+      const res = await apiClient.post(
+        "/tutorupload/documents/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
       );
       return res.data;
     },

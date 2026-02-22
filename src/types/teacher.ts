@@ -138,6 +138,11 @@ export interface TutorRegisterPayload {
   id: string;
 }
 
+export interface TutorRegisterResponse {
+  message: string;
+  tutorId: string;
+}
+
 export interface Tutor {
   _id: string;
   firstName: string;

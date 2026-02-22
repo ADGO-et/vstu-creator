@@ -195,7 +195,7 @@ const TeacherProfile = () => {
                     {hasTutorAccount ? (
                       <button
                         onClick={() => {
-                          window.location.href = "http://localhost:5174/";
+                          window.location.href = "https://trial.vstu.et:3456/";
                         }}
                         className="group relative inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden"
                       >
