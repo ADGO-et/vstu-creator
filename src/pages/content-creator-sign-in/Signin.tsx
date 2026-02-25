@@ -15,7 +15,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import {
   useContentCreatorSignin,
   useSalesSignin,
-  useLoginByPhoneUser,
+  useLoginByPhoneTeacher,
 } from "@/services/user";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,12 +43,6 @@ const formSchemaPhone = z.object({
   password: z.string(),
 });
 
-const formSchemaTeacherPhone = z.object({
-  phoneNumber: z
-    .string()
-    .min(9, { message: "Phone number must be at least 9 digits." }),
-});
-
 export default function SignIn() {
   const navigate = useNavigate();
   const [_, setRole] = useState<"creator" | "teacher" | "sales">("creator");
@@ -59,7 +53,7 @@ export default function SignIn() {
     },
   });
 
-  const teacherSignin = useLoginByPhoneUser({
+  const teacherSignin = useLoginByPhoneTeacher({
     onSuccess: () => {
       navigate("/teacher");
     },
@@ -165,23 +159,13 @@ function SignInForm({
   role: "creator" | "teacher" | "sales";
 }) {
   const form = useForm<
-    | z.infer<typeof formSchema>
-    | z.infer<typeof formSchemaPhone>
-    | z.infer<typeof formSchemaTeacherPhone>
+    z.infer<typeof formSchema> | z.infer<typeof formSchemaPhone>
   >({
-    resolver: zodResolver(
-      role === "creator"
-        ? formSchema
-        : role === "teacher"
-          ? formSchemaTeacherPhone
-          : formSchemaPhone,
-    ),
+    resolver: zodResolver(role === "creator" ? formSchema : formSchemaPhone),
     defaultValues:
       role === "creator"
         ? { email: "", password: "" }
-        : role === "teacher"
-          ? { phoneNumber: "" }
-          : { phoneNumber: "", password: "" },
+        : { phoneNumber: "", password: "" },
   });
 
   return (
@@ -191,11 +175,6 @@ function SignInForm({
           if (role === "creator") {
             const { email, password } = values as z.infer<typeof formSchema>;
             q.mutate({ email: email.trim(), password });
-          } else if (role === "teacher") {
-            const { phoneNumber } = values as z.infer<
-              typeof formSchemaTeacherPhone
-            >;
-            q.mutate({ phoneNumber: "251" + phoneNumber });
           } else {
             const { phoneNumber, password } = values as z.infer<
               typeof formSchemaPhone
@@ -278,27 +257,25 @@ function SignInForm({
                 </FormItem>
               )}
             />
-            {role === "sales" && (
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-700 font-semibold">
-                      Password
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        className="rounded-lg border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white/80 shadow-sm"
-                        autoComplete={"current-password"}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-700 font-semibold">
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      className="rounded-lg border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white/80 shadow-sm"
+                      autoComplete={"current-password"}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </>
         )}
 

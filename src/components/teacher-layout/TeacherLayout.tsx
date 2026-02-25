@@ -26,7 +26,7 @@ export default function TeacherLayout() {
 
   return (
     <div
-      className="h-screen w-full"
+      className="min-h-screen w-full overflow-hidden"
       style={{ ["--nav-height" as any]: `${navHeight}px` }}
     >
       {/* Fixed sidebar (full height) */}

@@ -1,4 +1,8 @@
-import { useGetTeacherProfile } from "@/services/teacher";
+import {
+  useGetTeacherProfile,
+  useGetTutorMe,
+  useGetCheckTutorRegistration,
+} from "@/services/teacher";
 import {
   User,
   Mail,
@@ -12,6 +16,7 @@ import {
   Clock,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const formatFullName = (t: any) =>
   [t?.firstName, t?.lastName].filter(Boolean).join(" ") || "Unnamed";
@@ -64,9 +69,12 @@ const Skeleton = () => (
 const TeacherProfile = () => {
   const { data: teacherProfile, isLoading, error } = useGetTeacherProfile();
   const [copied, setCopied] = useState(false);
+  const { data: tutor } = useGetTutorMe();
+  console.log("tutor me data:", tutor);
+  const navigate = useNavigate();
+  const { data: checkTutorRegistration } = useGetCheckTutorRegistration();
 
-  if (process.env.NODE_ENV === "development")
-    console.debug("teacher profile", teacherProfile);
+  const hasTutorAccount = checkTutorRegistration?.isRegistered;
 
   if (error) {
     return (
@@ -159,6 +167,50 @@ const TeacherProfile = () => {
                         <span>Joined {formatDate(t.createdAt)}</span>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* tutoring hub redirect */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-primary/10 via-white to-primary/5 rounded-2xl border border-primary/20 shadow-sm hover:shadow-md transition-shadow">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="relative p-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Tutoring Hub
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {hasTutorAccount
+                            ? "Access live sessions, manage students, and get paid."
+                            : "Start your tutoring journey with VSTU's interactive platform"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex-shrink-0">
+                    {hasTutorAccount ? (
+                      <button
+                        onClick={() => {
+                          window.location.href = "https://trial.vstu.et:3456/";
+                        }}
+                        className="group relative inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden"
+                      >
+                        Launch Hub
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          navigate("/teacher/tutor-register");
+                        }}
+                        className="group relative inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden"
+                      >
+                        Get Started
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

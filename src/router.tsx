@@ -66,6 +66,7 @@ import AdminEditContestQuestion from "./pages/admin-contests-detail/components/A
 import AdminAddContestQuestion from "./pages/admin-contests-detail/components/AdminAddContestQuestion";
 import TeacherContests from "./pages/teacher-contests/TeacherContests";
 import TeacherContestDetail from "./pages/teacher-contests/TeacherContestDetail";
+import TutorRegister from "./pages/tutor-signup/TutorRegister";
 
 export const router = createBrowserRouter([
   // { path: "", element: <ContentCreatorSignIn /> },
@@ -219,6 +220,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "", element: <Navigate replace to={"/teacher/referal"} /> },
       { path: "profile", element: <TeacherProfile /> },
+      { path: "tutor-register", element: <TutorRegister /> },
       { path: "referal", element: <TeacherReferal /> },
       { path: "contests", element: <AdminContests /> },
       {
