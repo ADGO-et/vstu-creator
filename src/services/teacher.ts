@@ -4,7 +4,6 @@ import {
   TeacherPayload,
   TeacherProfileInfo,
   TeacherReferralsResponse,
-  Tutor,
   TutorRegisterPayload,
   TutorRegisterResponse,
   TutorWithSubjects,
