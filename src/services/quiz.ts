@@ -45,7 +45,7 @@ export function useGetQuizzes(options?: {
       // if (langId !== undefined) queryParams.append("lang_id", langId);
 
       const res = await apiClient.get<QuizResponse>(
-        `/quizzes/?page=${page}&limit=${limit}&${queryParams}`
+        `/quizzes/?page=${page}&limit=${limit}&${queryParams}`,
       );
       //Todo: remove filter after all quizzes have 'topic' and 'topic.grade'
       const quizzes = res.data.quizzes.filter((q) => q.topic?.grade);
@@ -75,7 +75,7 @@ export function useGetQuizzesContest(options?: {
       // if (langId !== undefined) queryParams.append("lang_id", langId);
 
       const res = await apiClient.get<{ quizzes: Quiz[] }>(
-        `/quizzes/?${queryParams}`
+        `/quizzes/?${queryParams}`,
       );
       //Todo: remove filter after all quizzes have 'topic' and 'topic.grade'
       const quizzes = res.data.quizzes.filter((q) => q.topic?.grade);
@@ -116,7 +116,7 @@ export function useGetTopics(options?: {
       //Todo: use query params when backend updates
 
       const res = await apiClient.get<TopicsResponse>(
-        `/topics?page=${page}&limit=${limit}&${queryParams.toString()}`
+        `/topics?page=${page}&limit=${limit}&${queryParams.toString()}`,
       );
 
       return res.data;
@@ -160,7 +160,7 @@ export function useGetQuestion(questionId: string | null) {
 
     queryFn: async () => {
       const res = await apiClient.get<QuestionType2>(
-        `/questions/${questionId}`
+        `/questions/${questionId}`,
       );
       return res.data;
     },
@@ -251,7 +251,7 @@ export function useEditQuiz() {
 }
 
 export function useFetchQuizData(
-  quizIds: string[]
+  quizIds: string[],
 ): UseQueryResult<Quiz[], AxiosError> {
   return useQuery<Quiz[], AxiosError>({
     queryKey: [QUIZZES, quizIds],
@@ -263,7 +263,7 @@ export function useFetchQuizData(
           .then((res) => res.data)
           .catch(() => {
             return null;
-          })
+          }),
       );
       const quizzes = await Promise.all(quizPromises);
       const validQuizzes = quizzes.filter((q): q is Quiz => q !== null);
@@ -278,7 +278,7 @@ export function useAddQuestion() {
   return useMutation<
     void,
     AxiosError,
-    { quizId: string; question: AddQuestion; createdBy: string }
+    { quizId: string; question: AddQuestion; createdBy?: string }
   >({
     mutationFn: async ({ quizId, question, createdBy }) => {
       const id = (await apiClient.post<{ _id: string }>(`/questions`, question))
@@ -365,7 +365,7 @@ export function useSubmitAttempt() {
       if (intent === "QUIZ") {
         const res = await apiClient.post<{ attempt: { _id: string } }>(
           `/quizzes/${quizId}/submit`,
-          attemptData
+          attemptData,
         );
         return res.data.attempt._id;
       } else {
@@ -398,7 +398,7 @@ export function useGetAttempts(options: {
       if (studentId !== undefined) queryParams.append("s_id", studentId);
       if (quizId !== undefined) queryParams.append("q_id", quizId);
       const res = await apiClient.get<{ attempts: StudentAttempts[] }>(
-        `/attempts?${queryParams.toString()}`
+        `/attempts?${queryParams.toString()}`,
       );
       const data = res.data.attempts
         .filter((a) => a.studentId === studentId)
@@ -448,7 +448,7 @@ export function useGetStudentLatestAttempt(options: {
     queryFn: async () => {
       //Todo: replace with an endpoint that returns a single attempt
       const res = await apiClient.get<StudentAttempts>(
-        `/attempts/${studentId}?latest`
+        `/attempts/${studentId}?latest`,
       );
 
       const attempt =
@@ -469,14 +469,14 @@ export function useGetStudentLatestAttempt(options: {
 
 export function useGetSingleStudentLatestAttempt(
   quizId: string | null,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   return useQuery<SingleStudentAttempt | null, AxiosError>({
     queryKey: [ATTEMPTS, "recent", quizId],
     enabled: quizId !== null && (options?.enabled ?? true),
     queryFn: async () => {
       const res = await apiClient.get<SingleStudentAttempt>(
-        `/attempts/me/recent/${quizId}`
+        `/attempts/me/recent/${quizId}`,
       );
       return res.data;
     },
@@ -540,7 +540,7 @@ export function useGetCreatorVerifiedQuizzes(options?: {
       queryParams.append("isCreatorVerified", "true");
       queryParams.append("isAdminVerified", "false");
       const res = await apiClient.get<QuizResponse>(
-        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`
+        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`,
       );
       return res.data;
     },
@@ -562,7 +562,7 @@ export function useGetCreatorUnverifiedQuizzes(options?: {
       if (topicId) queryParams.append("topic_id", topicId);
       queryParams.append("isCreatorVerified", "false");
       const res = await apiClient.get<QuizResponse>(
-        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`
+        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`,
       );
       return res.data;
     },
@@ -606,7 +606,7 @@ export function useGetCreatorUnverifiedQuizzesFiltered(options?: {
       if (subjectId) queryParams.append("subjectId", subjectId);
       queryParams.append("isCreatorVerified", isCreatorVerified || "false");
       const res = await apiClient.get<QuizResponse>(
-        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`
+        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`,
       );
       return res.data;
     },
@@ -630,7 +630,7 @@ export function useGetAdminVerifiedQuizzes(options?: {
       queryParams.append("isCreatorVerified", "true");
       // queryParams.append("page", '6');
       const res = await apiClient.get<QuizResponse>(
-        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`
+        `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`,
       );
       return res.data;
     },
@@ -672,7 +672,7 @@ export function useGetTotalQuizzesContest() {
     queryKey: [QUIZZES, "contest", "total"],
     queryFn: async () => {
       const res = await apiClient.get<TotalQuizzesContestCount>(
-        `/figures/grades/quizzes-and-contests`
+        `/figures/grades/quizzes-and-contests`,
       );
       return res.data;
     },

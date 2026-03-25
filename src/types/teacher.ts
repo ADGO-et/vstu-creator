@@ -94,3 +94,104 @@ export interface TeacherReferralsResponse {
   currentPage: number;
   totalPages: number;
 }
+
+//tutor
+
+export type DayOfWeek =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+
+export interface AvailabilitySlot {
+  startTime: string; // "HH:mm"
+  endTime: string; // "HH:mm"
+  booked?: boolean; // defaults false
+}
+
+export interface Availability {
+  day: DayOfWeek;
+  isAvailable: boolean;
+  slots: AvailabilitySlot[];
+}
+
+export interface TutorSubject {
+  _id: string;
+  name: string;
+}
+
+export interface TutorRegisterPayload {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bio: string;
+  educationLevel: string;
+  institution: string;
+  subjects: string[];
+  experience: number; // years
+  hourlyRate: number;
+  availability: Availability[];
+  documents: string[]; // URLs
+  id: string;
+}
+
+export interface TutorRegisterResponse {
+  message: string;
+  tutorId: string;
+}
+
+export interface Tutor {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bio: string;
+  educationLevel: string;
+  institution: string;
+  subjects: string[];
+  experience: number;
+  hourlyRate: number;
+  availability: Availability[];
+  documents: string[];
+  id: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+export interface TutorProfile {
+  _id: string;
+  teacher: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  bio?: string;
+  educationLevel?: string;
+  institution?: string;
+  subjects: TutorSubject[];
+  experience?: number;
+  hourlyRate?: number;
+  availability: any[];
+  documents?: string[];
+  id?: string;
+  status?: "pending" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TutorSubjectRef {
+  _id: string;
+  name: string;
+}
+
+export interface TutorWithSubjects extends Omit<Tutor, "subjects"> {
+  subjects: TutorSubjectRef[];
+  status?: "pending" | "approved" | "rejected";
+}
+
+export interface CheckTutorRegistrationResponse {
+  isRegistered: boolean;
+  message: string;
+  tutor: TutorProfile | null;
+}

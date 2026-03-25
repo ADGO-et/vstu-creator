@@ -22,7 +22,7 @@ export default function AddEditQuestion({ isEdit }: { isEdit: boolean }) {
   const editQ = useEditQuestion();
   const quizQ = useGetQuiz(quizId || null);
   const fetchedQuestion = quizQ.data?.questions.find(
-    (q) => q._id === questionId
+    (q) => q._id === questionId,
   );
 
   useEffect(() => {
@@ -45,13 +45,13 @@ export default function AddEditQuestion({ isEdit }: { isEdit: boolean }) {
         {
           questionId,
           question: { question, choices, questionFlagged, answerFlagged },
-          createdBy: "Teacher",
+          // createdBy: "Teacher",
         },
         {
           onSuccess: () => {
             navigate("../..", { relative: "path" });
           },
-        }
+        },
       );
     } else {
       addQ.mutate(
@@ -60,7 +60,7 @@ export default function AddEditQuestion({ isEdit }: { isEdit: boolean }) {
           onSuccess: () => {
             navigate("..", { relative: "path" });
           },
-        }
+        },
       );
     }
   };

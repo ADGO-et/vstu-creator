@@ -144,8 +144,8 @@ const selectStyles = {
     backgroundColor: state.isSelected
       ? "hsl(var(--primary))"
       : state.isFocused
-      ? "hsl(var(--accent))"
-      : "transparent",
+        ? "hsl(var(--accent))"
+        : "transparent",
     color: state.isSelected
       ? "hsl(var(--primary-foreground))"
       : "hsl(var(--foreground))",
@@ -200,12 +200,12 @@ export function TeacherSignupForm() {
         gradesQ.data
           .slice()
           .sort((a, b) => a.grade - b.grade)
-          .map((g) => ({ label: `Grade ${g.grade}`, value: g._id }))
+          .map((g) => ({ label: `Grade ${g.grade}`, value: g._id })),
       );
     }
     if (langsQ.data) {
       setLanguages(
-        langsQ.data.map((l) => ({ label: getLocalLabel(l), value: l._id }))
+        langsQ.data.map((l) => ({ label: getLocalLabel(l), value: l._id })),
       );
     }
   }, [gradesQ.data, langsQ.data]);
@@ -234,11 +234,11 @@ export function TeacherSignupForm() {
 
       // Clear selected subjects if they're no longer available
       const availableSubjectIds = groups.flatMap((g) =>
-        g.options.map((o) => o.value)
+        g.options.map((o) => o.value),
       );
       const currentSubjects = form.getValues("subjectIds");
       const validSubjects = currentSubjects.filter((id) =>
-        availableSubjectIds.includes(id)
+        availableSubjectIds.includes(id),
       );
       if (validSubjects.length !== currentSubjects.length) {
         form.setValue("subjectIds", validSubjects);
@@ -261,7 +261,7 @@ export function TeacherSignupForm() {
   };
 
   const handleGradeChange = (
-    selectedOptions: MultiValue<{ value: string; label: string }> | null
+    selectedOptions: MultiValue<{ value: string; label: string }> | null,
   ) => {
     const ids = selectedOptions
       ? Array.from(selectedOptions).map((option) => option.value)
@@ -272,7 +272,7 @@ export function TeacherSignupForm() {
   };
 
   const handleLanguageChange = (
-    selectedOptions: readonly { value: string; label: string }[] | null
+    selectedOptions: readonly { value: string; label: string }[] | null,
   ) => {
     const ids = selectedOptions
       ? Array.from(selectedOptions).map((option) => option.value)
@@ -282,7 +282,7 @@ export function TeacherSignupForm() {
   };
 
   const handleSubjectChange = (
-    selectedOptions: readonly { value: string; label: string }[] | null
+    selectedOptions: readonly { value: string; label: string }[] | null,
   ) => {
     const ids = selectedOptions
       ? Array.from(selectedOptions).map((option) => option.value)
@@ -308,14 +308,14 @@ export function TeacherSignupForm() {
 
       // Validate that subjects are available for selected grades
       const availableSubjectIds = availableSubjectGroups.flatMap((g) =>
-        g.options.map((o) => o.value)
+        g.options.map((o) => o.value),
       );
       const invalidSubjects = values.subjectIds.filter(
-        (id) => !availableSubjectIds.includes(id)
+        (id) => !availableSubjectIds.includes(id),
       );
       if (invalidSubjects.length > 0) {
         setSubmitError(
-          "Some selected subjects are not available for the chosen grades. Please review your selections."
+          "Some selected subjects are not available for the chosen grades. Please review your selections.",
         );
         return;
       }
@@ -326,7 +326,7 @@ export function TeacherSignupForm() {
         (!values.woreda || !values.region || !values.zone)
       ) {
         setSubmitError(
-          "Please provide complete location information for the new school."
+          "Please provide complete location information for the new school.",
         );
         return;
       }
@@ -490,8 +490,8 @@ export function TeacherSignupForm() {
                                   rest.length === 0
                                     ? "9"
                                     : rest[0] !== "9"
-                                    ? "9" + rest.slice(1)
-                                    : rest;
+                                      ? "9" + rest.slice(1)
+                                      : rest;
                                 field.onChange("+251" + normalized);
                               }}
                             />
@@ -600,11 +600,10 @@ export function TeacherSignupForm() {
                               max="50"
                               className="h-11 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                               {...field}
-                              onChange={(e) =>
-                                field.onChange(
-                                  Number.parseInt(e.target.value) || 0
-                                )
-                              }
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                field.onChange(v === "" ? "" : Number(v));
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -640,7 +639,7 @@ export function TeacherSignupForm() {
                             value={field.value?.toString()}
                             onValueChange={(v) => {
                               const school = schoolQ.data.schools.find(
-                                (s) => s._id === v
+                                (s) => s._id === v,
                               );
                               const isSchoolName =
                                 v !== "" && school === undefined;
@@ -685,15 +684,15 @@ export function TeacherSignupForm() {
                                 onValueChange={(woredaName) => {
                                   field.onChange(woredaName);
                                   const woreda = getAllWoredas().find(
-                                    (w) => w.name === woredaName
+                                    (w) => w.name === woredaName,
                                   );
                                   form.setValue(
                                     "zone",
-                                    woreda?.zone.name || ""
+                                    woreda?.zone.name || "",
                                   );
                                   form.setValue(
                                     "region",
-                                    woreda?.zone.region.name || ""
+                                    woreda?.zone.region.name || "",
                                   );
                                 }}
                               />
@@ -745,7 +744,7 @@ export function TeacherSignupForm() {
                                 <WritableDropdown
                                   options={getAllZones()
                                     .filter(
-                                      (z) => z.region.name === formState.region
+                                      (z) => z.region.name === formState.region,
                                     )
                                     .map((z) => ({
                                       label: z.name,
@@ -785,7 +784,7 @@ export function TeacherSignupForm() {
                             isMulti
                             options={languages}
                             value={languages.filter((opt) =>
-                              field.value.includes(opt.value)
+                              field.value.includes(opt.value),
                             )}
                             onChange={(selected) =>
                               handleLanguageChange(selected)
@@ -813,7 +812,7 @@ export function TeacherSignupForm() {
                             isMulti
                             options={grades}
                             value={grades.filter((opt) =>
-                              field.value.includes(opt.value)
+                              field.value.includes(opt.value),
                             )}
                             onChange={(selected) => handleGradeChange(selected)}
                             styles={selectStyles}
