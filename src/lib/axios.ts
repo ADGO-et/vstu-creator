@@ -4,7 +4,7 @@ import axios from "axios";
 // const BASE_URL = "https://vstu.et:5059/api";
 // const BASE_URL = "https://api.vstu.et:4003/api";
 const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://api.vstu.et:4003/api";
+  import.meta.env.VITE_API_BASE_URL || "https://trial.vstu.et:2000/api";
 // const BASE_URL = "https://con.vstu.et:2356";
 // const BASE_URL = "https://dev.vstu.et:3456/api";
 // const BASE_URL = "https://trial.vstu.et:2000/api";
