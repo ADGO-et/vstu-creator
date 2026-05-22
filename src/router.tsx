@@ -69,7 +69,6 @@ import TeacherContestDetail from "./pages/teacher-contests/TeacherContestDetail"
 import TutorRegister from "./pages/tutor-signup/TutorRegister";
 
 export const router = createBrowserRouter([
-  // { path: "", element: <ContentCreatorSignIn /> },
   { path: "", element: <SignIn /> },
   { path: "signup", element: <Signup /> },
 

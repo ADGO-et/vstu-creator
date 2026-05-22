@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -122,9 +122,7 @@ type DocumentsFormValues = z.infer<typeof documentsSchema>;
 
 export default function TutorRegister() {
   const [step, setStep] = useState<1 | 2>(1);
-  const [registeredTutorId, setRegisteredTutorId] = useState<string | null>(
-    null,
-  );
+  const [_, setRegisteredTutorId] = useState<string | null>(null);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const { mutateAsync: registerTutor, isPending: isRegistering } =
@@ -262,7 +260,7 @@ export default function TutorRegister() {
 
       // Extract tutor ID from response
       // Adjust this based on your actual response structure
-      const tutorId = response?._id || response?.id || null;
+      const tutorId = response?.tutorId || null;
       setRegisteredTutorId(tutorId);
 
       setRegistrationSuccess(true);

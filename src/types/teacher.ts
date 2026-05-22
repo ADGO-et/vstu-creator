@@ -131,6 +131,7 @@ export interface TutorRegisterPayload {
   educationLevel: string;
   institution: string;
   subjects: string[];
+  grades?: string[];
   experience: number; // years
   hourlyRate: number;
   availability: Availability[];

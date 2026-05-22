@@ -26,7 +26,9 @@ export default function QuizInfoForm({ isEdit }: { isEdit: boolean }) {
   const { topicId, quizId } = useParams<{ topicId: string; quizId: string }>();
   if (!topicId) throw new Error("Subject is required in route");
   if (!quizId && isEdit) throw new Error("Quiz id is required in route");
-
+  const DIFFICULTIES = ["EASY", "MEDIUM", "HARD"] as const;
+  type Difficulty = (typeof DIFFICULTIES)[number];
+  const [difficulty, setDifficulty] = useState<Difficulty>("MEDIUM");
   const [quizTitle, setQuizTitle] = useState("");
 
   const [description, setDescription] = useState("");
@@ -42,6 +44,7 @@ export default function QuizInfoForm({ isEdit }: { isEdit: boolean }) {
     if (getQ.data) {
       setQuizTitle(getQ.data.quizTitle);
       setDescription(getQ.data.description || "");
+      setDifficulty(getQ.data.difficulty || "MEDIUM");
       // setLanguage(getQ.data.language._id);
     }
   }, [getQ.data]);
@@ -60,6 +63,8 @@ export default function QuizInfoForm({ isEdit }: { isEdit: boolean }) {
         topic: topicId,
         questions: getQ.data.questions.map((q) => q._id),
         createdBy: "Teacher",
+        difficulty,
+        for: "QUIZ",
       };
       editQ.mutate({ id: quizId || "-", quiz });
     } else {
@@ -70,6 +75,8 @@ export default function QuizInfoForm({ isEdit }: { isEdit: boolean }) {
         topic: topicId,
         questions: [],
         createdBy: "Teacher",
+        difficulty,
+        for: "QUIZ",
       };
       addQ.mutate(quiz, {
         onSuccess: (id) => {
@@ -120,7 +127,20 @@ export default function QuizInfoForm({ isEdit }: { isEdit: boolean }) {
               onChange={(e) => setDescription(e.target.value)}
             />
           </Label>
-
+          <Label className="flex flex-col gap-3">
+            <span>Difficulty </span>
+            <select
+              className="h-11 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+            >
+              {DIFFICULTIES.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </Label>
           {/* <Label className="flex flex-col gap-3">
             <span>Language</span>
             <Select

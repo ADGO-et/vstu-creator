@@ -41,8 +41,7 @@ export default function ContestQuizzesQuizzes() {
     isEnabled: true,
   });
 
-  const data: undefined | Quiz[] = quizzesQ.data
-  ?.map((q) => ({
+  const data: undefined | Quiz[] = quizzesQ.data?.map((q) => ({
     id: q._id,
     name: q.quizTitle,
     language: q.language?.language,
@@ -65,7 +64,9 @@ export default function ContestQuizzesQuizzes() {
             <br />
             {topicQ.data && (
               <span>
-                <span className="p-1 bg-muted mx-1">{topicQ.data.subject.name}</span>
+                <span className="p-1 bg-muted mx-1">
+                  {topicQ.data.subject.name}
+                </span>
                 ,
                 <span className="p-1 bg-muted mx-1">
                   Chapter {topicQ.data.chapter}

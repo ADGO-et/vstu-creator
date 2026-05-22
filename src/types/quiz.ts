@@ -181,6 +181,8 @@ export interface AddEditQuiz {
   quizTitle: string;
   description: string;
   createdBy: string;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+  for: "QUIZ" | "CONTEST";
 }
 
 export interface AddEditQuizforContest {

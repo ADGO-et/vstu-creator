@@ -571,19 +571,21 @@ export function useGetCreatorUnverifiedQuizzes(options?: {
 
 export function useGetCreatorUnverifiedQuizzesFiltered(options?: {
   topicId?: string;
-  gradeId?: string;
-  subjectId?: string;
+  grade?: string;
+  subjectName?: string;
   isEnabled?: boolean;
   page?: number;
   limit?: number;
+  isAdminVerified?: string;
   isCreatorVerified?: string;
 }) {
   const {
     topicId,
-    gradeId,
-    subjectId,
+    grade,
+    subjectName,
     page = 1,
     limit = 6,
+    isAdminVerified,
     isCreatorVerified,
   } = options || {};
   return useQuery<QuizResponse, AxiosError>({
@@ -594,16 +596,18 @@ export function useGetCreatorUnverifiedQuizzesFiltered(options?: {
       page,
       limit,
       topicId,
-      gradeId,
-      subjectId,
+      grade,
+      subjectName,
+      isAdminVerified,
       isCreatorVerified,
     ],
     enabled: options?.isEnabled,
     queryFn: async () => {
       const queryParams = new URLSearchParams();
       if (topicId) queryParams.append("topic_id", topicId);
-      if (gradeId) queryParams.append("gradeId", gradeId);
-      if (subjectId) queryParams.append("subjectId", subjectId);
+      if (grade) queryParams.append("grade", grade);
+      if (subjectName) queryParams.append("subject_name", subjectName);
+      queryParams.append("isAdminVerified", isAdminVerified || "false");
       queryParams.append("isCreatorVerified", isCreatorVerified || "false");
       const res = await apiClient.get<QuizResponse>(
         `/quizzes?page=${page}&limit=${limit}&${queryParams.toString()}`,

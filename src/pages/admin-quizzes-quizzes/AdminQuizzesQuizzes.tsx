@@ -8,9 +8,15 @@ import { useGetQuizzes, useGetTopic } from "@/services/quiz";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { Link, useParams } from "react-router-dom";
 import { Delete } from "./components/Delete";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useState } from "react";
-
 
 interface Quiz {
   id: string;
@@ -22,7 +28,7 @@ interface Quiz {
 const h = createColumnHelper<Quiz>();
 const cols: ColumnDef<Quiz, any>[] = [
   h.accessor("name", { header: "Quiz" }),
-  h.accessor("language", { header: "Language" }),
+  // h.accessor("language", { header: "Language" }),
   h.accessor("numQuestions", { header: "Questions" }),
   h.display({
     header: "Action",
@@ -45,7 +51,7 @@ export default function AdminQuizzesQuizzes() {
     topicId: topicId || "-",
     isEnabled: true,
     page: currentPage,
-    limit
+    limit,
   });
 
   const data: undefined | Quiz[] = quizzesQ.data?.quizzes.map((q) => ({
@@ -56,12 +62,12 @@ export default function AdminQuizzesQuizzes() {
   }));
 
   const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
   const handleNext = () => {
     if (quizzesQ.data && currentPage < quizzesQ.data?.totalPages) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
@@ -81,7 +87,9 @@ export default function AdminQuizzesQuizzes() {
             <br />
             {topicQ.data && (
               <span>
-                <span className="p-1 bg-muted mx-1">{topicQ.data.subject.name}</span>
+                <span className="p-1 bg-muted mx-1">
+                  {topicQ.data.subject.name}
+                </span>
                 ,
                 <span className="p-1 bg-muted mx-1">
                   Chapter {topicQ.data.chapter}
@@ -96,9 +104,9 @@ export default function AdminQuizzesQuizzes() {
           </p>
         </div>
         <div className="flex items-center gap-4">
-        <Link to="add">
-          <Button>Add Quiz</Button>
-        </Link>
+          <Link to="add">
+            <Button>Add Quiz</Button>
+          </Link>
         </div>
       </div>
       <div className="relative h-[470px]">
@@ -111,28 +119,36 @@ export default function AdminQuizzesQuizzes() {
           enablePagination={false}
         />
 
-        <div className={` ${(quizzesQ.data?.totalCount ?? 0) <= limit ? 'hidden': ""} absolute bottom-0 left-0 w-full bg-white p-4 flex justify-center`}>
+        <div
+          className={` ${(quizzesQ.data?.totalCount ?? 0) <= limit ? "hidden" : ""} absolute bottom-0 left-0 w-full bg-white p-4 flex justify-center`}
+        >
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
                   onClick={handlePrevious}
-                  className={currentPage === 1 ? "disabled-class text-gray-500 cursor-not-allowed hover:bg-white hover:text-gray-500" : "cursor-pointer"}
+                  className={
+                    currentPage === 1
+                      ? "disabled-class text-gray-500 cursor-not-allowed hover:bg-white hover:text-gray-500"
+                      : "cursor-pointer"
+                  }
                 />
               </PaginationItem>
               <PaginationItem>
                 <PaginationLink isActive>{currentPage}</PaginationLink>
               </PaginationItem>
-              <PaginationItem className="gap-x-2">
-                of
-              </PaginationItem>
+              <PaginationItem className="gap-x-2">of</PaginationItem>
               <PaginationItem className="gap-x-2">
                 {quizzesQ.data?.totalPages}
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext
                   onClick={handleNext}
-                  className={quizzesQ.data && currentPage === quizzesQ.data?.totalPages ? "disabled-class text-gray-500 cursor-not-allowed hover:bg-white hover:text-gray-500" : "cursor-pointer"}
+                  className={
+                    quizzesQ.data && currentPage === quizzesQ.data?.totalPages
+                      ? "disabled-class text-gray-500 cursor-not-allowed hover:bg-white hover:text-gray-500"
+                      : "cursor-pointer"
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

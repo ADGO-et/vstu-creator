@@ -40,17 +40,24 @@ const AllCreatorUnverifiedFiltered = () => {
   const [limit, _] = useState(6);
   const [jumpPage, setJumpPage] = useState("");
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [isCreatorVerified, setIsCreatorVerified] = useState<string>("false");
+  const [selectedSubjectName, setSelectedSubjectName] = useState<string | null>(
+    null,
+  );
+  const [isAdminVerified, setIsAdminVerified] = useState<string>("false");
 
   const { data: gradesData } = useGetGrades();
+  const selectedGradeNumber =
+    gradesData?.find((g) => g._id === selectedGrade)?.grade.toString() ||
+    undefined;
+
   const { data, isLoading, error, refetch } =
     useGetCreatorUnverifiedQuizzesFiltered({
       page: currentPage,
-      limit: 1000,
-      gradeId: selectedGrade || undefined,
-      subjectId: selectedSubject || undefined,
-      isCreatorVerified,
+      limit,
+      grade: selectedGradeNumber,
+      subjectName: selectedSubjectName || undefined,
+      isAdminVerified,
+      isCreatorVerified: "true",
     });
 
   const { mutate: verifyQuiz } = useVerifyQuizByCreator();
@@ -101,43 +108,36 @@ const AllCreatorUnverifiedFiltered = () => {
   const getSubjectsForGrade = () => {
     if (!selectedGrade || !gradesData) return [];
     const grade = gradesData.find((g) => g._id === selectedGrade);
+    console.log(grade);
     return grade ? grade.subjects : [];
   };
 
   const handleGradeChange = (value: string) => {
     setSelectedGrade(value);
-    setSelectedSubject(null);
+    setSelectedSubjectName(null);
     setCurrentPage(1);
   };
 
   const handleSubjectChange = (value: string) => {
-    setSelectedSubject(value);
+    setSelectedSubjectName(value);
     setCurrentPage(1);
   };
-  // this are to be removed once the
-  const filteredQuizzes =
-    data?.quizzes?.filter((quiz) => {
-      // Find the selected grade object
-      const gradeObj = gradesData?.find((g) => g._id === selectedGrade);
-      const gradeValue = gradeObj ? gradeObj.grade.toString() : "";
-      return (
-        // @ts-ignore
-        (!selectedGrade || quiz.topic.grade.grade.toString() === gradeValue) &&
-        (!selectedSubject || quiz.topic.subject._id === selectedSubject)
-      );
-    }) || [];
-  const totalPages = Math.ceil(filteredQuizzes.length / limit);
-  const paginatedQuizzes = filteredQuizzes.slice(
-    (currentPage - 1) * limit,
-    currentPage * limit
-  );
-  console.log(filteredQuizzes[0]);
+  const totalPages = data?.totalPages || 1;
+
+  const handleClearFilters = () => {
+    setSelectedGrade(null);
+    setSelectedSubjectName(null);
+    setIsAdminVerified("false");
+    setJumpPage("");
+    setCurrentPage(1);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-4xl">Unverified Quizzes</h1>
       <p>List of all unverified quizzes</p>
 
-      <div className="flex gap-4">
+      <div className="flex flex-wrap items-end gap-4">
         <div className="w-48">
           <Select onValueChange={handleGradeChange} value={selectedGrade || ""}>
             <SelectTrigger>
@@ -156,7 +156,7 @@ const AllCreatorUnverifiedFiltered = () => {
         <div className="w-48">
           <Select
             onValueChange={handleSubjectChange}
-            value={selectedSubject || ""}
+            value={selectedSubjectName || ""}
             disabled={!selectedGrade}
           >
             <SelectTrigger>
@@ -177,8 +177,11 @@ const AllCreatorUnverifiedFiltered = () => {
         </div>
         <div className="w-48">
           <Select
-            onValueChange={setIsCreatorVerified}
-            value={isCreatorVerified}
+            onValueChange={(value) => {
+              setIsAdminVerified(value);
+              setCurrentPage(1);
+            }}
+            value={isAdminVerified}
           >
             <SelectTrigger>
               <SelectValue placeholder="Verification Status" />
@@ -189,12 +192,15 @@ const AllCreatorUnverifiedFiltered = () => {
             </SelectContent>
           </Select>
         </div>
+
+        <Button variant="ghost" onClick={handleClearFilters}>
+          Clear Filters
+        </Button>
       </div>
 
       <div className="relative ">
         <AdminTable
-          // @ts-ignore
-          data={paginatedQuizzes}
+          data={(data?.quizzes as unknown as QuizType[]) || []}
           columns={columns}
           isLoading={isLoading}
           error={error}

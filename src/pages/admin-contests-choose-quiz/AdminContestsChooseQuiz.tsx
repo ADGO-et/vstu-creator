@@ -60,7 +60,9 @@ export default function AdminContestsChooseQuiz() {
             <br />
             {topicQ.data && (
               <span>
-                <span className="p-1 bg-muted mx-1">{topicQ.data.subject.name}</span>
+                <span className="p-1 bg-muted mx-1">
+                  {topicQ.data.subject.name}
+                </span>
                 ,
                 <span className="p-1 bg-muted mx-1">
                   Chapter {topicQ.data.chapter}
