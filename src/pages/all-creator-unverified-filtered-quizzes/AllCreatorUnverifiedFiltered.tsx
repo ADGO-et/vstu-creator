@@ -1,6 +1,5 @@
 import {
-  useGetCreatorUnverifiedQuizzesFiltered,
-  useVerifyQuizByCreator,
+  useGetCreatorUnverifiedQuizzesFiltered
 } from "@/services/quiz";
 import {
   Pagination,
@@ -60,7 +59,7 @@ const AllCreatorUnverifiedFiltered = () => {
       isCreatorVerified: "true",
     });
 
-  const { mutate: verifyQuiz } = useVerifyQuizByCreator();
+  // const { mutate: verifyQuiz } = useVerifyQuizByCreator();
 
   const columns: ColumnDef<QuizType, any>[] = [
     columnHelper.accessor("quizTitle", { header: "Quiz Title" }),
@@ -71,17 +70,6 @@ const AllCreatorUnverifiedFiltered = () => {
     columnHelper.accessor("createdAt", {
       header: "Created At",
       cell: (props) => new Date(props.getValue()).toLocaleDateString(),
-    }),
-    columnHelper.display({
-      header: "Verify",
-      cell: ({ row }) => (
-        <Button
-          onClick={() => verifyQuiz({ id: row.original._id })}
-          variant="secondary"
-        >
-          Verify
-        </Button>
-      ),
     }),
     columnHelper.display({
       header: "Action",
@@ -134,8 +122,8 @@ const AllCreatorUnverifiedFiltered = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-4xl">Unverified Quizzes</h1>
-      <p>List of all unverified quizzes</p>
+      <h1 className="text-4xl">Verified Quizzes</h1>
+      <p>List of all creator verified quizzes</p>
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="w-48">
@@ -187,8 +175,8 @@ const AllCreatorUnverifiedFiltered = () => {
               <SelectValue placeholder="Verification Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="false">Unverified</SelectItem>
-              <SelectItem value="true">Verified</SelectItem>
+              <SelectItem value="false">Admin Unverified</SelectItem>
+              <SelectItem value="true">Admin Verified</SelectItem>
             </SelectContent>
           </Select>
         </div>

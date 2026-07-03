@@ -10,12 +10,12 @@ export const CClinks = [
   { title: "Add Contest Quizzes", to: "/cc/quizzes", Icon: IoIosAdd },
   { title: "Check reports", to: "/cc/reports", Icon: FaQuestionCircle },
   {
-    title: "All unverified Quizzes",
+    title: "Unverified Quizzes",
     to: "/cc/unverified",
     Icon: MdPendingActions,
   },
   {
-    title: "Unverified Quizzes",
+    title: "Verified Quizzes",
     to: "/cc/unverified-quizzes",
     Icon: MdPendingActions,
   },
