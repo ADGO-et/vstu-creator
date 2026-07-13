@@ -53,7 +53,6 @@ const DAYS: DayOfWeek[] = [
   "Sunday",
 ];
 
-import { useGetSubjects } from "@/services/subjects";
 import ReactSelect from "react-select";
 import {
   X,
@@ -106,7 +105,8 @@ const basicInfoSchema = z.object({
   bio: z.string().min(10, "Please add a short bio (min 10 chars)"),
   educationLevel: z.string().min(1, "Required"),
   institution: z.string().min(1, "Required"),
-  subjectsInput: z.string().min(1, "Enter at least one subject"),
+  gradesInput: z.string().min(1, "Select at least one grade"),
+  subjectsInput: z.string().min(1, "Select at least one subject"),
   experience: z.coerce.number().min(0, "Must be >= 0"),
   hourlyRate: z.coerce.number().min(0, "Must be >= 0"),
 });
@@ -137,7 +137,6 @@ export default function TutorRegister() {
   );
 
   const [message, setMessage] = useState<string | null>(null);
-  const { data: subjects } = useGetSubjects();
   const { data: teacherProfile } = useGetTeacherProfile();
 
   // Form for step 1
@@ -151,6 +150,7 @@ export default function TutorRegister() {
       educationLevel: "",
       institution: "",
       subjectsInput: "",
+      gradesInput: "",
       experience: 0,
       hourlyRate: 0,
     },
@@ -173,6 +173,21 @@ export default function TutorRegister() {
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
 
+  const selectedGradeIds = () => parseCSV(basicForm.getValues("gradesInput"));
+
+  const availableSubjects = () => {
+    if (!teacherProfile?.grades || !teacherProfile?.subject) return [];
+
+    const gradeIds = selectedGradeIds();
+
+    const subjectIds = teacherProfile.grades
+      .filter((grade: any) => gradeIds.includes(grade._id))
+      .flatMap((grade: any) => grade.subjects || []);
+
+    return teacherProfile.subject.filter((subject: any) =>
+      subjectIds.includes(subject._id),
+    );
+  };
   const documentsPreview = useMemo(
     () => parseCSV(documentsForm.getValues("documentsInput") || ""),
     [documentsForm.watch("documentsInput")],
@@ -224,14 +239,25 @@ export default function TutorRegister() {
 
   useEffect(() => {
     if (!teacherProfile) return;
+
     basicForm.reset((prev) => ({
       ...prev,
+
       firstName: teacherProfile.firstName ?? "",
+
       lastName: teacherProfile.lastName ?? "",
+
       phoneNumber: normalizePhone(teacherProfile.phoneNumber),
+
       experience: teacherProfile.teachingExperience ?? 0,
+
+      gradesInput:
+        teacherProfile.grades?.map((g: any) => g._id).join(", ") ?? "",
+
+      subjectsInput:
+        teacherProfile.subject?.map((s: any) => s._id).join(", ") ?? "",
     }));
-  }, [teacherProfile, basicForm]);
+  }, [teacherProfile]);
 
   // Step 1: Submit basic info
   const onSubmitBasicInfo = async (values: BasicInfoFormValues) => {
@@ -244,6 +270,7 @@ export default function TutorRegister() {
       bio: values.bio,
       educationLevel: values.educationLevel,
       institution: values.institution,
+      grades: parseCSV(values.gradesInput),
       subjects: parseCSV(values.subjectsInput),
       experience: Number(values.experience) || 0,
       hourlyRate: Number(values.hourlyRate) || 0,
@@ -550,17 +577,74 @@ export default function TutorRegister() {
                   {/* Subjects, Experience and Rate */}
                   <section className="space-y-4">
                     <h2 className="text-base font-medium">Expertise & Rate</h2>
+                    <FormField
+                      control={basicForm.control}
+                      name="gradesInput"
+                      render={({ field }) => {
+                        const options =
+                          teacherProfile?.grades?.map((grade: any) => ({
+                            value: grade._id,
+                            label: `Grade ${grade.grade}`,
+                          })) ?? [];
 
+                        const selected = options.filter((option) =>
+                          parseCSV(field.value).includes(option.value),
+                        );
+
+                        return (
+                          <FormItem>
+                            <FormLabel>Grades</FormLabel>
+
+                            <ReactSelect
+                              isMulti
+                              options={options}
+                              value={selected}
+                              onChange={(values) => {
+                                const ids = values?.map((v) => v.value) ?? [];
+
+                                field.onChange(ids.join(", "));
+
+                                // remove subjects that are no longer available
+
+                                const allowed = teacherProfile?.grades
+                                  .filter((g: any) => ids.includes(g._id))
+                                  .flatMap((g: any) =>
+                                    g.subjects.map((s: any) => s),
+                                  );
+
+                                const currentSubjects = parseCSV(
+                                  basicForm.getValues("subjectsInput"),
+                                );
+
+                                const validSubjects = currentSubjects.filter(
+                                  (id) =>
+                                    allowed?.some((s: any) => s._id === id),
+                                );
+
+                                basicForm.setValue(
+                                  "subjectsInput",
+                                  validSubjects.join(", "),
+                                );
+                              }}
+                              styles={selectStyles}
+                              placeholder="Select grades..."
+                            />
+
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
                     <FormField
                       control={basicForm.control}
                       name="subjectsInput"
                       render={({ field }) => {
                         const ids = parseCSV(field.value);
-                        const options =
-                          subjects?.map((s) => ({
-                            value: s._id,
-                            label: s.name,
-                          })) ?? [];
+
+                        const options = availableSubjects().map((s: any) => ({
+                          value: s._id,
+                          label: s.name,
+                        }));
                         const selected = options.filter((o) =>
                           ids.includes(o.value),
                         );
@@ -586,7 +670,6 @@ export default function TutorRegister() {
                                 placeholder="Select subjects..."
                                 className="text-sm"
                                 classNamePrefix="rs"
-                                isLoading={!subjects}
                               />
                             </FormControl>
                             <FormMessage />
