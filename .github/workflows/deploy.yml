@@ -1,9 +1,17 @@
 name: CI/CD — Dev Deploy (test-env)
 
+# Deploys on:
+# - direct pushes to test-env
+# - PR merges into test-env (GitHub emits a push event on merge)
+# - manual "Run workflow" from the Actions tab
 on:
   push:
     branches: [test-env]
   workflow_dispatch:
+
+concurrency:
+  group: vstu-creator-deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   REGISTRY: ghcr.io
