@@ -1,0 +1,34 @@
+# Isolated Compose project — does not share network/volumes with other apps
+# (vstu-student-web on 3080, vstu-admin-web on 3081, vstu_api, etc.)
+name: vstu-creator-dev
+
+services:
+  web:
+    image: ${IMAGE_NAME:-ghcr.io/adgo-et/vstu-creator}:${IMAGE_TAG:-dev}
+    container_name: vstu-creator-web
+    restart: unless-stopped
+    # Dedicated port 3082 — free on ecs-velnet2
+    ports:
+      - "127.0.0.1:${HOST_PORT:-3082}:80"
+    networks:
+      - vstu-creator-dev-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "app=vstu-creator"
+      - "env=dev"
+      - "managed-by=vstu-creator-dev-compose"
+
+networks:
+  vstu-creator-dev-net:
+    name: vstu-creator-dev-net
+    driver: bridge
