@@ -1,0 +1,11 @@
+# Local build + run (no registry required)
+# Usage: export VITE_API_BASE_URL=... && docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:?Set VITE_API_BASE_URL in the environment or .env}
+    image: vstu-creator:local
