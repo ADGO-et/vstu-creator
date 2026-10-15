@@ -1,12 +1,12 @@
-name: CI/CD — Dev Deploy (test-env)
+name: CI/CD — Prod Deploy (main)
 
 # Deploys on:
-# - direct pushes to test-env
-# - PR merges into test-env (GitHub emits a push event on merge)
+# - direct pushes to main
+# - PR merges into main (GitHub emits a push event on merge)
 # - manual "Run workflow" from the Actions tab
 on:
   push:
-    branches: [test-env]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -18,9 +18,13 @@ env:
   IMAGE_NAME: adgo-et/vstu-creator
   FULL_IMAGE: ghcr.io/adgo-et/vstu-creator
   # Isolated from other apps on ecs-velnet2 (student 3080, admin 3081, etc.)
-  DEPLOY_PATH: /opt/vstu-creator-dev
-  COMPOSE_PROJECT: vstu-creator-dev
-  IMAGE_TAG: dev
+  # NOTE: was vstu-creator-dev / tag "dev" when this pipeline ran on test-env.
+  # The live container on .55 still uses that old project name - it will be
+  # orphaned (left running under its old name) the first time this runs
+  # against main until someone cleans it up with the old COMPOSE_PROJECT.
+  DEPLOY_PATH: /opt/vstu-creator
+  COMPOSE_PROJECT: vstu-creator
+  IMAGE_TAG: prod
 
 jobs:
   build-and-push:
@@ -48,8 +52,7 @@ jobs:
         with:
           images: ${{ env.FULL_IMAGE }}
           tags: |
-            type=raw,value=dev
-            type=raw,value=test-env
+            type=raw,value=prod
             type=sha,prefix=,format=short
 
       - name: Require VITE_API_BASE_URL secret
@@ -82,40 +85,48 @@ jobs:
             VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
 
   deploy:
-    name: Deploy Dev to Ubuntu Server
+    name: Deploy Prod to Ubuntu Server
     needs: build-and-push
     runs-on: ubuntu-latest
-    environment: development
+    environment: dev
     permissions:
       contents: read
       packages: read
+    env:
+      SSH_HOST: '196.190.251.55'
+      SSH_USER: 'root'
+      SSH_PORT: '22'
+      HOST_PORT: '3082'
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Require SSH secrets
+      - name: Configure SSH
         env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEV_SSH_KNOWN_HOSTS }}
         run: |
-          missing=0
-          [ -n "$SSH_HOST" ] || { echo "Missing SSH_HOST"; missing=1; }
-          [ -n "$SSH_USER" ] || { echo "Missing SSH_USER"; missing=1; }
-          [ -n "$SSH_PASSWORD" ] || { echo "Missing SSH_PASSWORD"; missing=1; }
-          if [ "$missing" -ne 0 ]; then
-            echo "::error::Add SSH_* secrets in repo or development environment."
-            exit 1
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          if [ -n "$SSH_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" > ~/.ssh/known_hosts
           fi
+          cat > ~/.ssh/config <<CONFIG
+          Host deploy
+            HostName $SSH_HOST
+            User $SSH_USER
+            Port $SSH_PORT
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            ServerAliveInterval 30
+          CONFIG
 
       - name: Deploy via SSH (server pulls image — no slow image upload)
         env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          HOST_PORT: ${{ secrets.HOST_PORT }}
           DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
           COMPOSE_PROJECT: ${{ env.COMPOSE_PROJECT }}
           FULL_IMAGE: ${{ env.FULL_IMAGE }}
@@ -128,25 +139,11 @@ jobs:
           echo "Deploying ref=${GITHUB_REF_NAME} sha=${GITHUB_SHA}"
           test -f docker-compose.yml || { echo "docker-compose.yml missing in workspace"; ls -la; exit 1; }
 
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq sshpass
+          ssh deploy "mkdir -p ${DEPLOY_PATH}"
+          scp docker-compose.yml "deploy:${DEPLOY_PATH}/docker-compose.yml"
 
-          PORT="${SSH_PORT:-22}"
-          APP_PORT="${HOST_PORT:-3082}"
-
-          export SSHPASS="${SSH_PASSWORD}"
-          SSH_BASE_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-
-          sshpass -e ssh ${SSH_BASE_OPTS} -p "${PORT}" \
-            "${SSH_USER}@${SSH_HOST}" "mkdir -p ${DEPLOY_PATH}"
-
-          sshpass -e scp ${SSH_BASE_OPTS} -P "${PORT}" \
-            docker-compose.yml \
-            "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/docker-compose.yml"
-
-          sshpass -e ssh ${SSH_BASE_OPTS} -p "${PORT}" \
-            "${SSH_USER}@${SSH_HOST}" \
-            "GHCR_USER=$(printf %q "$GHCR_USER") GHCR_TOKEN=$(printf %q "$GHCR_TOKEN") FULL_IMAGE=$(printf %q "$FULL_IMAGE") IMAGE_TAG=$(printf %q "$IMAGE_TAG") DEPLOY_PATH=$(printf %q "$DEPLOY_PATH") COMPOSE_PROJECT=$(printf %q "$COMPOSE_PROJECT") APP_PORT=$(printf %q "$APP_PORT") bash -s" <<'EOF'
+          ssh deploy \
+            "GHCR_USER=$(printf %q "$GHCR_USER") GHCR_TOKEN=$(printf %q "$GHCR_TOKEN") FULL_IMAGE=$(printf %q "$FULL_IMAGE") IMAGE_TAG=$(printf %q "$IMAGE_TAG") DEPLOY_PATH=$(printf %q "$DEPLOY_PATH") COMPOSE_PROJECT=$(printf %q "$COMPOSE_PROJECT") APP_PORT=$(printf %q "$HOST_PORT") bash -s" <<'EOF'
           set -euo pipefail
           echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
           docker pull "${FULL_IMAGE}:${IMAGE_TAG}"
@@ -161,30 +158,28 @@ jobs:
           EOF
 
       - name: Health check
-        uses: appleboy/ssh-action@v1.2.0
         env:
-          HOST_PORT: ${{ secrets.HOST_PORT }}
           DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
           COMPOSE_PROJECT: ${{ env.COMPOSE_PROJECT }}
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          envs: HOST_PORT,DEPLOY_PATH,COMPOSE_PROJECT
-          script: |
-            set -euo pipefail
-            cd "$DEPLOY_PATH"
-            echo "Waiting for vstu-creator-web health..."
-            for i in $(seq 1 20); do
-              status="$(docker inspect --format='{{.State.Health.Status}}' vstu-creator-web 2>/dev/null || echo starting)"
-              if [ "$status" = "healthy" ]; then
-                echo "vstu-creator-dev is healthy on 127.0.0.1:${HOST_PORT:-3082}"
-                docker compose -p "$COMPOSE_PROJECT" ps
-                exit 0
-              fi
-              sleep 3
-            done
-            echo "Health check timed out (other server containers were not touched)"
-            docker compose -p "$COMPOSE_PROJECT" logs --tail=100
-            exit 1
+          HOST_PORT: ${{ env.HOST_PORT }}
+        run: |
+          ssh deploy "cd '$DEPLOY_PATH' && bash -s" <<EOF2
+          set -e
+          echo "Waiting for vstu-creator-web health..."
+          for i in \$(seq 1 20); do
+            status="\$(docker inspect --format='{{.State.Health.Status}}' vstu-creator-web 2>/dev/null || echo starting)"
+            if [ "\$status" = "healthy" ]; then
+              echo "vstu-creator prod is healthy on 127.0.0.1:${HOST_PORT}"
+              docker compose -p "$COMPOSE_PROJECT" ps
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "Health check timed out (other server containers were not touched)"
+          docker compose -p "$COMPOSE_PROJECT" logs --tail=100
+          exit 1
+          EOF2
+
+      - name: Clean up runner
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

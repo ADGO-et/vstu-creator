@@ -44,9 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     env:
-      SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
-      SSH_USER: ${{ secrets.DEV_SSH_USER }}
-      SSH_PORT: ${{ secrets.DEV_SSH_PORT || '22' }}
+      SSH_HOST: '196.189.61.146'
+      SSH_USER: 'charteredadmin'
+      SSH_PORT: '22'
     steps:
       - uses: actions/checkout@v4
 
