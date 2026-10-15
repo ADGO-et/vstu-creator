@@ -14,9 +14,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: adgo-et/vstu-creator
-  FULL_IMAGE: ghcr.io/adgo-et/vstu-creator
+  REGISTRY: registry.dev.vstu.et
+  IMAGE_NAME: vstu-creator
+  FULL_IMAGE: registry.dev.vstu.et/vstu-creator
   # Isolated from other apps on ecs-velnet2 (student 3080, admin 3081, etc.)
   # NOTE: was vstu-creator-dev / tag "dev" when this pipeline ran on test-env.
   # The live container on .55 still uses that old project name - it will be
@@ -39,12 +39,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: 'meda-ci'
+          password: '48ed1f96a5cb9ebe817e3209c328c49292496e53532d4504'
 
       - name: Extract Docker metadata
         id: meta
@@ -131,8 +131,8 @@ jobs:
           COMPOSE_PROJECT: ${{ env.COMPOSE_PROJECT }}
           FULL_IMAGE: ${{ env.FULL_IMAGE }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
-          GHCR_USER: ${{ github.actor }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USERNAME: 'meda-ci'
+          REGISTRY_PASSWORD: '48ed1f96a5cb9ebe817e3209c328c49292496e53532d4504'
         run: |
           set -euo pipefail
 
@@ -143,9 +143,9 @@ jobs:
           scp docker-compose.yml "deploy:${DEPLOY_PATH}/docker-compose.yml"
 
           ssh deploy \
-            "GHCR_USER=$(printf %q "$GHCR_USER") GHCR_TOKEN=$(printf %q "$GHCR_TOKEN") FULL_IMAGE=$(printf %q "$FULL_IMAGE") IMAGE_TAG=$(printf %q "$IMAGE_TAG") DEPLOY_PATH=$(printf %q "$DEPLOY_PATH") COMPOSE_PROJECT=$(printf %q "$COMPOSE_PROJECT") APP_PORT=$(printf %q "$HOST_PORT") bash -s" <<'EOF'
+            "REGISTRY_USERNAME=$(printf %q "$REGISTRY_USERNAME") REGISTRY_PASSWORD=$(printf %q "$REGISTRY_PASSWORD") FULL_IMAGE=$(printf %q "$FULL_IMAGE") IMAGE_TAG=$(printf %q "$IMAGE_TAG") DEPLOY_PATH=$(printf %q "$DEPLOY_PATH") COMPOSE_PROJECT=$(printf %q "$COMPOSE_PROJECT") APP_PORT=$(printf %q "$HOST_PORT") bash -s" <<'EOF'
           set -euo pipefail
-          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          printf '%s' "$REGISTRY_PASSWORD" | docker login "${FULL_IMAGE%%/*}" -u "$REGISTRY_USERNAME" --password-stdin
           docker pull "${FULL_IMAGE}:${IMAGE_TAG}"
           cd "$DEPLOY_PATH"
           printf '%s\n' \
@@ -154,7 +154,7 @@ jobs:
             "HOST_PORT=${APP_PORT}" \
             > .env
           docker compose -p "$COMPOSE_PROJECT" up -d
-          docker logout ghcr.io >/dev/null 2>&1 || true
+          docker logout "${FULL_IMAGE%%/*}" >/dev/null 2>&1 || true
           EOF
 
       - name: Health check

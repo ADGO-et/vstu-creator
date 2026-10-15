@@ -14,8 +14,8 @@ concurrency:
 env:
   NODE_VERSION: '20'
   DEPLOY_PATH: /opt/vstu-creator-dev
-  REGISTRY: registry.dev.meda.pitrontech.et
-  IMAGE_NAME: registry.dev.meda.pitrontech.et/vstu-creator
+  REGISTRY: registry.dev.vstu.et
+  IMAGE_NAME: registry.dev.vstu.et/vstu-creator
   HOST_PORT: '3082'
   VITE_API_BASE_URL: https://api.development.vstu.et/api
 
@@ -88,8 +88,8 @@ jobs:
       - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          username: 'meda-ci'
+          password: '48ed1f96a5cb9ebe817e3209c328c49292496e53532d4504'
 
       - name: Build & push image
         uses: docker/build-push-action@v6
@@ -112,8 +112,8 @@ jobs:
 
       - name: Pull image & restart container
         env:
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          REGISTRY_USERNAME: 'meda-ci'
+          REGISTRY_PASSWORD: '48ed1f96a5cb9ebe817e3209c328c49292496e53532d4504'
         run: |
           printf '%s' "$REGISTRY_PASSWORD" | ssh deploy "docker login '$REGISTRY' -u '$REGISTRY_USERNAME' --password-stdin"
           ssh deploy "cd '$DEPLOY_PATH' && docker compose pull web && docker compose up -d --no-build --remove-orphans"
