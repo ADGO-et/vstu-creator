@@ -17,7 +17,7 @@ env:
   REGISTRY: registry.dev.vstu.et
   IMAGE_NAME: registry.dev.vstu.et/vstu-creator
   HOST_PORT: '3082'
-  VITE_API_BASE_URL: https://api.development.vstu.et/api
+  VITE_API_BASE_URL: https://api.dev.vstu.et/api
 
 jobs:
   ci:
